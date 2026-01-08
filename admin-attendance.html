@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Manager | Professional System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+    :root { 
+        --primary: #00b09b; 
+        --secondary: #3b82f6;
+        --bg: #f1f5f9; 
+        --dark: #333; 
+        --success: #00b09b;
+        --danger: #ff5f6d;
+    }
+    
+    body { font-family: "Inter", sans-serif; background: var(--bg); padding: 15px; margin: 0; }
+    
+    .card { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 15px; 
+        max-width: 800px; 
+        margin: 0 auto 20px auto; 
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden; /* Content ko card ke andar rakhne ke liye */
+    }
+
+    /* Attendance List Section - Ise scrollable banaya hai */
+    #attendanceContainer { 
+        margin: 20px 0; 
+        max-height: 400px; /* List zyada badi ho toh scroll bar aa jayega */
+        overflow-y: auto; 
+        padding-right: 5px;
+    }
+
+    .student-item { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 12px 15px; 
+        border: 1px solid #f0f0f0; 
+        margin-bottom: 8px; 
+        border-radius: 10px;
+        background: #fff;
+        transition: 0.2s;
+    }
+    
+    .student-item:hover { border-color: var(--primary); background: #fafafa; }
+    .s-name h5 { margin: 0; font-size: 15px; color: var(--dark); }
+    .s-name span { font-size: 12px; color: #777; }
+
+    /* Buttons Style */
+    .att-btns { display: flex; gap: 8px; }
+    .att-btns button { 
+        width: 38px; height: 38px; border-radius: 50%; 
+        border: 2px solid #eee; font-weight: bold; 
+        cursor: pointer; background: white; transition: 0.3s;
+    }
+    
+    .btn-p.active { background: var(--success); color: white; border-color: var(--success); box-shadow: 0 2px 5px rgba(0,176,155,0.3); }
+    .btn-a.active { background: var(--danger); color: white; border-color: var(--danger); box-shadow: 0 2px 5px rgba(255,95,109,0.3); }
+
+    .control-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+    select, input { padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 14px; outline: none; }
+    select:focus, input:focus { border-color: var(--primary); }
+    
+    .save-btn { 
+        background: linear-gradient(135deg, #00b09b, #96c93d); 
+        color: white; border: none; padding: 14px; 
+        border-radius: 12px; width: 100%; font-size: 15px;
+        font-weight: 700; cursor: pointer; margin-top: 10px;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+
+    /* Register Style Table - Professional Look */
+    .table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 12px; border: 1px solid #eee; }
+    table { width: 100%; border-collapse: collapse; min-width: 1000px; font-size: 13px; }
+    th { background: #f8fafc; padding: 12px 8px; font-weight: 600; color: #64748b; border-bottom: 2px solid #edf2f7; }
+    td { padding: 10px 8px; border-bottom: 1px solid #f1f5f9; text-align: center; }
+    .present-cell { color: var(--success); font-weight: bold; }
+    .absent-cell { color: var(--danger); font-weight: bold; }
+
+    /* Print settings for better reports */
+    @media print {
+        .card, .save-btn, .control-panel { box-shadow: none; border: none; }
+        body { padding: 0; background: white; }
+    }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3><i class="fas fa-user-check"></i> Attendance</h3>
+        <input type="date" id="attDate" />
+    </div>
+    <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee" />
+
+    <div class="control-panel">
+        <select id="attClass" onchange="loadStudentsForAttendance()">
+        <option value="">Select Class</option>
+          <option value="Nur">Nursery</option>
+          <option value="LKG">LKG</option>
+          <option value="UKG">UKG</option>
+          <option value="1st">1st</option>
+          <option value="2nd">2nd</option>
+          <option value="3rd">3rd</option>
+          <option value="4th">4th</option>
+          <option value="5th">5th</option>
+          <option value="6th">6th</option>
+          <option value="7th">7th</option>
+          <option value="8th">8th</option>
+          <option value="9th">9th</option>
+          <option value="10th">10th</option>
+            </select>
+        <select id="attSection"><option value="A">A</option><option value="B">B</option></select>
+    </div>
+
+    <div id="attendanceContainer">
+        <p style="text-align: center; color: #999">Select a class to mark attendance</p>
+    </div>
+
+    <button class="save-btn" onclick="saveFinalAttendance()"><i class="fas fa-save"></i> Save Daily Attendance</button>
+    <button class="save-btn" onclick="showMonthlyReport()" style="background: #3b82f6;"><i class="fas fa-table"></i> Generate Monthly Register</button>
+</div>
+
+<div id="reportModal" class="card" style="display:none; margin-top: 20px; max-width: 100%;">
+    <h3 id="reportTitle" style="text-align: center;"></h3>
+    <div class="table-wrapper">
+        <table id="registerTable">
+            <thead id="registerHead"></thead>
+            <tbody id="registerBody"></tbody>
+        </table>
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 15px;">
+        <button onclick="exportToExcel()" class="save-btn" style="background: #166534;"><i class="fas fa-file-excel"></i> Export to Excel</button>
+        <button onclick="window.print()" class="save-btn" style="background: #64748b;"><i class="fas fa-print"></i> Print</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById("attDate").valueAsDate = new Date();
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    let attendanceDB = JSON.parse(localStorage.getItem("attendance")) || {};
+
+   function loadStudentsForAttendance() {
+    const cls = document.getElementById("attClass").value;
+    const container = document.getElementById("attendanceContainer");
+    container.innerHTML = "";
+
+    // Step 1: Filter students based on class (Trim lagaya hai taaki spacing ka issue na ho)
+    const filtered = students.filter((s) => s.currentClass.trim() === cls.trim());
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:20px; color:#666;">No students found in ' + cls + '. Check Student Master.</p>';
+        return;
+    }
+
+    // Step 2: Student list generate karna (Ye missing tha)
+    filtered.forEach((s) => {
+        container.innerHTML += `
+            <div class="student-item" data-roll="${s.roll}">
+                <div class="s-name">
+                    <h5>${s.name}</h5>
+                    <span>Roll No: ${s.roll}</span>
+                </div>
+                <div class="att-btns">
+                    <button class="btn-p" onclick="markAttendance(this, 'P')">P</button>
+                    <button class="btn-a" onclick="markAttendance(this, 'A')">A</button>
+                </div>
+            </div>`;
+    });
+   }
+    function markAttendance(btn, status) {
+        const row = btn.parentElement.parentElement;
+        row.querySelectorAll("button").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        row.setAttribute("data-status", status);
+    }
+
+    function saveFinalAttendance() {
+        const date = document.getElementById("attDate").value;
+        const cls = document.getElementById("attClass").value;
+        if (!cls) return alert("Select Class!");
+
+        let dailyData = [];
+        document.querySelectorAll(".student-item").forEach((item) => {
+            dailyData.push({
+                roll: item.getAttribute("data-roll"),
+                status: item.getAttribute("data-status") || "P"
+            });
+        });
+
+        attendanceDB[`${date}_${cls}`] = dailyData;
+        localStorage.setItem("attendance", JSON.stringify(attendanceDB));
+        alert("Saved!");
+    }
+
+    function showMonthlyReport() {
+        const cls = document.getElementById('attClass').value;
+        if(!cls) return alert("Select Class!");
+
+        const selectedDate = new Date(document.getElementById('attDate').value);
+        const year = selectedDate.getFullYear();
+        const month = selectedDate.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const monthName = selectedDate.toLocaleString('default', { month: 'long' });
+
+        document.getElementById('reportTitle').innerText = `Register: ${monthName} ${year} - Class ${cls}`;
+        
+        // Build Header
+        let headHtml = `<tr><th>Roll</th><th>Student Name</th>`;
+        for(let d=1; d<=daysInMonth; d++) headHtml += `<th>${d}</th>`;
+        headHtml += `<th>P</th><th>A</th></tr>`;
+        document.getElementById('registerHead').innerHTML = headHtml;
+
+        // Build Body
+        const filtered = students.filter(s => s.currentClass === cls);
+        let bodyHtml = '';
+
+        filtered.forEach(s => {
+            let pCount = 0, aCount = 0;
+            let rowHtml = `<tr><td>${s.roll}</td><td style="text-align:left;">${s.name}</td>`;
+            
+            for(let d=1; d<=daysInMonth; d++) {
+                const dStr = `${year}-${(month+1).toString().padStart(2, '0')}-${d.toString().padStart(2, '0')}`;
+                const dayData = attendanceDB[`${dStr}_${cls}`];
+                let status = "-";
+                
+                if(dayData) {
+                    const record = dayData.find(r => r.roll === s.roll);
+                    if(record) {
+                        status = record.status;
+                        status === 'P' ? pCount++ : aCount++;
+                    }
+                }
+                rowHtml += `<td class="${status === 'P' ? 'present-cell' : 'absent-cell'}">${status}</td>`;
+            }
+            bodyHtml += rowHtml + `<td>${pCount}</td><td>${aCount}</td></tr>`;
+        });
+
+        document.getElementById('registerBody').innerHTML = bodyHtml;
+        document.getElementById('reportModal').style.display = 'block';
+    }
+
+    function exportToExcel() {
+        const table = document.getElementById("registerTable");
+        const html = table.outerHTML;
+        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+    }
+</script>
+</body>
+</html>
+
+ 

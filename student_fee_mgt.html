@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fee Management | Professional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #4361ee; --bg: #f8f9fd; --white: #ffffff; --text: #1e293b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); padding: 20px; color: var(--text); }
+        
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; text-decoration: none; color: var(--primary); font-weight: 600; font-size: 14px; transition: 0.3s; }
+        .btn-back:hover { transform: translateX(-5px); }
+
+        .fee-card { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 30px; border: 1px solid #eef2f7; }
+        .fee-card h2, .fee-card h3 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+        
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        
+        .input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #64748b; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s; background: #fdfdfd; }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1); }
+
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 600; font-size: 16px; transition: 0.3s; box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2); }
+        .btn-submit:hover { background: #3751d4; transform: translateY(-2px); }
+
+        /* Responsive Table */
+        .table-container { width: 100%; overflow-x: auto; margin-top: 15px; border-radius: 10px; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; background: white; }
+        th { background: #f8fafc; padding: 15px; text-align: left; font-size: 13px; color: #64748b; text-transform: uppercase; }
+        td { padding: 15px; border-top: 1px solid #f1f5f9; font-size: 14px; }
+        
+        .amt-tag { color: #10b981; font-weight: 700; background: #ecfdf5; padding: 4px 8px; border-radius: 6px; }
+        .delete-btn { color: #ef4444; border: none; background: #fee2e2; padding: 8px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .delete-btn:hover { background: #fecaca; }
+
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .fee-card { padding: 15px; }
+            .grid-inputs { grid-template-columns: 1fr; } /* Mobile par inputs ek ke niche ek */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="admin-dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> Dashboard Par Wapas Jayein</a>
+
+    <div class="fee-card">
+        <h2><i class="fas fa-file-invoice-dollar"></i> Collect Student Fee</h2>
+        <div class="grid-inputs">
+            <div class="input-group">
+                <label>Select Class</label>
+                <select id="classFilter" onchange="filterStudents()">
+                    <option value="">-- Class --</option>
+                    <script>
+                        ["Nursery","LKG","UKG","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"].forEach(c => document.write(`<option value="${c}">${c}</option>`));
+                    </script>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Section</label>
+                <select id="secFilter" onchange="filterStudents()">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Student Name</label>
+                <select id="studentList">
+                    <option value="">-- Class Chunein --</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Fee Month</label>
+                <select id="feeMonth">
+                    <option>January 2026</option>
+                    <option>February 2026</option>
+                    <option>March 2026</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Amount (₹)</label>
+                <input type="number" id="feeAmount" placeholder="Fees bhariye">
+            </div>
+            <div class="input-group">
+                <label>Payment Mode</label>
+                <select id="payMode">
+                    <option>Cash</option>
+                    <option>Online/UPI</option>
+                </select>
+            </div>
+        </div>
+        <button class="btn-submit" onclick="submitFee()">Fees Jama Karein & Save Karein</button>
+    </div>
+
+    <div class="fee-card">
+        <h3><i class="fas fa-clock-rotate-left"></i> History</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Student</th>
+                        <th>Month</th>
+                        <th>Amount</th>
+                        <th>Mode</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="feeHistory"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            renderFeeHistory();
+        };
+
+        function filterStudents() {
+            const selectedClass = document.getElementById('classFilter').value;
+            const selectedSec = document.getElementById('secFilter').value;
+            const studentSelect = document.getElementById('studentList');
+            
+            // admin-students.html se data connect ho raha hai
+            const allStudents = JSON.parse(localStorage.getItem('schoolStudents')) || [];
+            
+            const filtered = allStudents.filter(s => 
+                String(s.class) === String(selectedClass) && s.section === selectedSec
+            );
+
+            studentSelect.innerHTML = '<option value="">-- Student Select Karein --</option>';
+            if(filtered.length > 0) {
+                filtered.forEach(s => {
+                    studentSelect.innerHTML += `<option value="${s.name}">${s.name} (Roll: ${s.roll})</option>`;
+                });
+            } else {
+                studentSelect.innerHTML = '<option value="">Bacche nahi mile</option>';
+            }
+        }
+
+        function submitFee() {
+            const studentName = document.getElementById('studentList').value;
+            const className = document.getElementById('classFilter').value;
+            const amount = document.getElementById('feeAmount').value;
+            const month = document.getElementById('feeMonth').value;
+            const mode = document.getElementById('payMode').value;
+            const date = new Date().toLocaleDateString();
+
+            if(!studentName || !amount || !className) {
+                alert("Kripya sari details bhariye!");
+                return;
+            }
+
+            let fees = JSON.parse(localStorage.getItem('studentFees')) || [];
+            fees.unshift({
+                id: Date.now(),
+                name: studentName,
+                class: className,
+                month: month,
+                amount: parseInt(amount),
+                mode: mode,
+                date: date
+            });
+
+            localStorage.setItem('studentFees', JSON.stringify(fees));
+            alert("Fees Jama Ho Gayi!");
+            
+            document.getElementById('feeAmount').value = "";
+            renderFeeHistory();
+        }
+
+        function renderFeeHistory() {
+            const fees = JSON.parse(localStorage.getItem('studentFees')) || [];
+            const tbody = document.getElementById('feeHistory');
+            tbody.innerHTML = "";
+
+            fees.forEach(f => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${f.date}</td>
+                        <td><strong>${f.name}</strong><br><small>Class: ${f.class}</small></td>
+                        <td>${f.month}</td>
+                        <td><span class="amt-tag">₹${f.amount}</span></td>
+                        <td>${f.mode}</td>
+                        <td><button onclick="deleteFee(${f.id})" class="delete-btn"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteFee(id) {
+            if(confirm("Kya aap is record ko hatana chahte hain?")) {
+                let fees = JSON.parse(localStorage.getItem('studentFees')) || [];
+                fees = fees.filter(f => f.id !== id);
+                localStorage.setItem('studentFees', JSON.stringify(fees));
+                renderFeeHistory();
+            }
+        }
+    </script>
+</body>
+</html>

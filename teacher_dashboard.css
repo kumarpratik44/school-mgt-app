@@ -1,0 +1,408 @@
+ /* --- Global Styles --- */
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f1f7f6; /* Light green tint */
+    padding-bottom: 90px; /* Space for bottom nav */
+}
+
+/* --- Teal Header Section --- */
+.teacher-header {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+    color: white;
+    padding: 30px 20px 70px;
+    border-radius: 0 0 35px 35px;
+}
+
+.teacher-header h2 {
+    font-size: 19px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.teacher-header p {
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* --- Avatar Overlap --- */
+.t-avatar-section {
+    margin-top: -55px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+}
+
+.t-avatar-section img {
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    background: white;
+    object-fit: cover;
+}
+
+/* Selection Bar Container */
+.selection-container {
+    padding: 0 20px;
+    margin-top: -15px; /* Avatar ke close laane ke liye */
+    margin-bottom: 20px;
+}
+
+.selection-box {
+    background: white;
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 176, 155, 0.08); /* Soft Teal Shadow */
+}
+
+.select-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.select-field label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #00b09b; /* Teal color matching the theme */
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.select-field select {
+    width: 100%;
+    padding: 10px;
+    border: 1.5px solid #f0f0f0;
+    border-radius: 12px;
+    font-size: 14px;
+    background-color: #fdfdfd;
+    color: #333;
+    outline: none;
+    appearance: none; /* Default arrow hatane ke liye */
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300b09b' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.select-field select:focus {
+    border-color: #00b09b;
+    background-color: white;
+}
+/* --- Action Grid (4 Cards) --- */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s;
+}
+
+.card:active { transform: scale(0.95); }
+
+.card i {
+    font-size: 26px;
+    color: #00b09b;
+    margin-bottom: 10px;
+}
+
+.card h4 {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* --- Student Attendance List --- */
+.list-section {
+    background: white;
+    margin: 0 20px 20px;
+    padding: 20px;
+    border-radius: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+}
+
+.student-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.student-item:last-child { border-bottom: none; }
+
+.s-name h5 {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+}
+
+.s-name span {
+    font-size: 11px;
+    color: #999;
+}
+
+/* --- Attendance Buttons (P/A) --- */
+.att-btns {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-p, .btn-a {
+    width: 35px;
+    height: 35px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.btn-p { background: #e6fcf5; color: #00b09b; }
+.btn-a { background: #fff5f5; color: #ff6b6b; }
+
+/* Active State Colors */
+.btn-p.active {
+    background: #00b09b !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(0, 176, 155, 0.3);
+}
+
+.btn-a.active {
+    background: #ff6b6b !important;
+    color: white !important;
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+/* 1. Modal Container (Poori screen cover karta hai) */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000; /* Isse modal sabse upar rahega */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Thoda dark overlay */
+    backdrop-filter: blur(5px); /* Background halka dhundhla ho jayega */
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. Modal Content Box (Safed Card) */
+.modal-content {
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 400px;
+    padding: 30px 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: left;
+    animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalSlideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* 3. Textarea (Enter Homework Details Wala Box) */
+textarea#homeworkInput {
+    width: 100%;
+    height: 150px;
+    background-color: #f8fbfb; /* Halka teal-white background */
+    border: 2px solid #e0eeee;
+    border-radius: 20px;
+    padding: 15px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+    resize: none; /* User ise khinch kar bada nahi kar sakega */
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+textarea#homeworkInput:focus {
+    border-color: #00b09b; /* Focus hone par green border */
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 176, 155, 0.1);
+}
+
+/* 4. Modal Titles */
+.modal-content h3 {
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#hwTargetText {
+    background: #e6fcf5;
+    color: #00b09b;
+    padding: 5px 12px;
+    border-radius: 50px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+/* --- New Modals Design (Events & Exams) --- */
+
+/* 1. Target Badge: Jo dikhayega kis class ke liye post ho raha hai */
+.target-badge {
+    background: #e6fcf5; /* Halka green background */
+    color: #00b09b;     /* Teal text */
+    padding: 6px 15px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 15px;
+    border: 1px solid #c3f3e5;
+}
+
+/* 2. Modal Titles: Icons ka color set karne ke liye */
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 18px;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-content h3 i {
+    color: #00b09b; /* Icon color matching theme */
+}
+
+/* 3. Common Button Style for Exams/Events */
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 176, 155, 0.2);
+    transition: transform 0.2s ease;
+}
+
+.btn-login:active {
+    transform: scale(0.97); /* Click karne par dabne wala effect */
+}
+
+/* 4. Textarea fix: Takki wo box ke andar sahi dikhe */
+.modal-content textarea {
+    width: 100%;
+    min-height: 120px;
+    border: 1.5px solid #eee;
+    border-radius: 15px;
+    padding: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    background-color: #fafafa;
+}
+
+.modal-content textarea:focus {
+    border-color: #00b09b;
+    background-color: #fff;
+}
+
+/* Sirf Event aur Exam modal ke liye alag design */
+.event-style .modal-content {
+    background: #ffffff !important;
+    border-radius: 25px !important;
+    padding: 25px !important;
+    border: none !important;
+}
+
+.event-style textarea {
+    width: 100% !important;
+    height: 120px !important;
+    background: #f8fbfb !important;
+    border: 1.5px solid #e0eeee !important;
+    border-radius: 15px !important;
+    padding: 12px !important;
+    margin: 10px 0 !important;
+    color: #333 !important;
+}
+
+.event-style .target-badge {
+    background: #e6fcf5 !important;
+    color: #00b09b !important;
+    padding: 5px 12px !important;
+    border-radius: 50px !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+    display: inline-block !important;
+}
+/* --- Bottom Navigation --- */
+.teacher-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    padding: 12px 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
+    border-radius: 25px 25px 0 0;
+    z-index: 100;
+}
+
+.nav-item {
+    flex: 1;
+    text-align: center;
+    color: #ccc;
+    text-decoration: none;
+}
+
+.nav-item.active { color: #00b09b; }
+.nav-item i { font-size: 22px; display: block; margin-bottom: 3px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
+
+.close-btn {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    z-index: 9999; /* Isse button hamesha sabse upar rahega */
+    padding: 10px; /* Click area badhane ke liye */
+    line-height: 1;
+    display: block;
+}
+
+.close-btn:hover {
+    color: #ff0000; /* Hover karne par red hoga taaki pata chale click ho raha hai */
+}

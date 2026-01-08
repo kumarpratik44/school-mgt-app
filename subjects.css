@@ -1,0 +1,68 @@
+ .section-title {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 1.2rem;
+}
+
+.subject-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Mobile par 2 columns */
+    gap: 15px;
+}
+
+.subject-card {
+    background: white;
+    padding: 20px 10px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+}
+
+.subject-card:active {
+    transform: scale(0.95); /* Click karne par chota hoga (app feel) */
+}
+
+.sub-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 10px;
+    font-size: 20px;
+    color: white;
+}
+
+/* Icons Colors */
+.math { background: #ff5e57; }
+.science { background: #0be881; }
+.english { background: #4bcffa; }
+.s_science { background: #ef5777; }
+.hindi {background: skyblue;}
+.computer {background: #333;}
+.game {background: rgb(150, 150, 75);}
+
+.subject-card h4 {
+    margin: 10px 0 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+.subject-card p {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.view-btn {
+    background: #f0f2f5;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #764ba2;
+    font-weight: bold;
+    cursor: pointer;
+}

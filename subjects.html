@@ -1,0 +1,90 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Subjects</title>
+    <link rel="stylesheet" href="dashboard.css"> <link rel="stylesheet" href="subjects.css">  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="profile-info">
+            <h2 id="dispName">Namaste, Rahul! 👋</h2>
+            <p id="dispClass">Class: 10th-B</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h3 class="section-title">Your Subjects</h3>
+        
+        <div class="subject-grid">
+            <div class="subject-card">
+                <div class="sub-icon math"><i class="fas fa-calculator"></i></div>
+                <h4>Mathematics</h4>
+                <p>Teacher: RK Singh</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+            <div class="subject-card">
+                <div class="sub-icon science"><i class="fas fa-flask"></i></div>
+                <h4>Science</h4>
+                <p>Teacher: Anjali Ma'am</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+            <div class="subject-card">
+                <div class="sub-icon english"><i class="fas fa-book"></i></div>
+                <h4>English</h4>
+                <p>Teacher: S. Peter</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+            <div class="subject-card">
+                <div class="sub-icon s_science"><i class="fas fa-monument"></i></div>
+                <h4>S.Science</h4>
+                <p>Teacher: Arti Ma'am</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+             <div class="subject-card">
+                <div class="sub-icon hindi"><i class="fas fa-book"></i></div>
+                <h4>Hindi</h4>
+                <p>Teacher: Shivam Tripathi</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+             <div class="subject-card">
+                <div class="sub-icon computer"><i class="fas fa-desktop"></i></div>
+                <h4>Computer</h4>
+                <p>Teacher: Manoj Sir</p>
+                <button class="view-btn">View Notes</button>
+            </div>
+
+             <div class="subject-card">
+                <div class="sub-icon game"><i class="fas fa-trophy"></i></i></div>
+                <h4>Game</h4>
+                <p>Teacher: Mahjeet Sir</p>
+                <button class="view-btn">View Message</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.href='student_dashboard.html'">
+            <i class="fas fa-home"></i><span>Home</span>
+        </div>
+        <div class="nav-item" id="nav-subjects" onclick="location.href='subjects.html'">
+            <i class="fas fa-book"></i><span>Subjects</span>
+        </div>
+        <div class="nav-item" onclick="location.href='final-result.html'">
+            <i class="fas fa-file-alt"></i><span>Exams</span>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="location.href='student_profile.html'">
+             <i class="fas fa-user"></i><span>Profile</span>
+        </div>
+    </div>
+
+    <script src="subjects.js"></script>
+</body>
+</html>

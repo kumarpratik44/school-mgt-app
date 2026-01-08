@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Report Portal | Validation Fix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #1e1b4b; --bg: #f1f5f9; --success: #10b981; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 15px; }
+        .no-print { max-width: 1100px; margin: 0 auto 30px auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
+        .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .section-header { grid-column: 1/-1; background: #e2e8f0; padding: 10px; font-weight: 800; margin-top: 20px; border-radius: 5px; color: var(--primary); border-left: 6px solid var(--primary); }
+        input, select { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; width: 100%; outline: none; }
+        input:invalid { border-color: #ef4444; background-color: #fef2f2; }
+        label { font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 5px; display: block; }
+        button { background: var(--primary); color: white; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; margin-top: 15px; }
+        .mode-btn { width: auto; padding: 10px 20px; margin: 0 5px; font-size: 13px; }
+        .btn-print { background: var(--success); }
+        /* Table Styles */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        /* Screen aur Print dono ke liye logo style */
+.school-logo {
+    height: 80px;      /* Logo ki unchai */
+    width: auto;       /* Chauwdai apne aap set hogi */
+    margin-bottom: 10px;
+    display: block;    /* Photo ko center karne ke liye help karega */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media print {
+    .no-print { display: none !important; }
+    #reportCard { display: block !important; }
+    
+    /* Print mein logo ko force karne ke liye */
+    .school-logo {
+        display: block !important;
+        -webkit-print-color-adjust: exact; /* Colors aur logo ko saaf dikhane ke liye */
+        print-color-adjust: exact;
+    }
+}
+
+        /* Report Card CSS */
+        #reportCard { display: none; width: 210mm; padding: 15mm; margin: auto; background: white; border: 10px double #222; }
+        .school-header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+        .school-name { font-size: 28px; font-weight: 900; }
+        .info-table, .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .data-table th, .data-table td { border: 1px solid #000; padding: 8px; text-align: center; font-size: 13px; }
+        .flex-container { display: flex; gap: 20px; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            #reportCard { display: block !important; }
+            
+        }
+    </style>
+</head>
+<body>
+    <div style="padding: 15px; background: white; border-bottom: 1px solid #ddd;">
+    <a href="admin-dashboard.html" style="text-decoration: none; color: #0056b3; font-weight: 600;">
+        <i class="fas fa-arrow-left"></i> Dashboard Par Wapas Jayein
+    </a>
+</div>
+
+<div class="no-print">
+    <h2><i class="fas fa-check-shield"></i> Result Entry & Validation</h2>
+    
+    <div class="input-grid">
+        <div><label>Class</label>
+            <select id="fClass" onchange="loadStudents()">
+                <option value="">Select</option>
+                <script>["Nursery","LKG","UKG","1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"].forEach(c => document.write(`<option value="${c}">${c}</option>`));</script>
+            </select>
+        </div>
+        <div><label>Section</label><select id="fSection" onchange="loadStudents()"><option value="A">A</option><option value="B">B</option></select></div>
+        
+        <div id="studentSelectDiv">
+            <label>Student</label>
+            <select id="sSelect"></select>
+        </div>
+
+        <div><label>Subject</label>
+            <select id="subSelect">
+                <option value="English">English</option><option value="Maths">Maths</option><option value="Science">Science</option>
+                <option value="Hindi">Hindi</option><option value="Computer">Computer</option><option value="S. Science">S. Science</option>
+                <option value="Sanskrit">Sanskrit</option><option value="Moral Science">Moral Science</option><option value="Music">Music</option>
+                <option value="Home Science">Home Science</option><option value="Agriculture">Agriculture</option><option value="Art & Craft">Art & Craft</option>
+            </select>
+        </div>
+    </div>
+
+    <div style="text-align:center; margin: 20px 0;">
+        <span style="font-weight:bold;">Entry Mode:</span>
+        <button class="mode-btn" onclick="toggleEntryMode('single')" style="background:#6366f1; width:auto; padding:8px 15px;">Single Student</button>
+        <button class="mode-btn" onclick="toggleEntryMode('bulk')" style="background:#f59e0b; width:auto; padding:8px 15px;">Bulk (Full Class)</button>
+    </div>
+
+    <div id="singleSection">
+        <div class="section-header">Academic Marks (Limit: UT-25, Exam-75)</div>
+        <div class="input-grid">
+            <div><label>UT-1 (Max 25)</label><input type="number" id="ut1" max="25" placeholder="0-25"></div>
+            <div><label>Half Yearly (Max 75)</label><input type="number" id="hy" max="75" placeholder="0-75"></div>
+            <div><label>UT-2 (Max 25)</label><input type="number" id="ut2" max="25" placeholder="0-25"></div>
+            <div><label>Final Exam (Max 75)</label><input type="number" id="final" max="75" placeholder="0-75"></div>
+        </div>
+
+        <div class="section-header">Personality Traits</div>
+        <div class="input-grid" id="traitsInputs"></div>
+        <button onclick="saveAllData()"><i class="fas fa-save"></i> Save Student Data</button>
+    </div>
+
+    <div id="bulkSection" style="display: none;">
+        <div class="section-header">Class-wise Marks Entry</div>
+        <div style="overflow-x: auto; background: white; padding: 15px; border-radius: 10px;">
+            <table class="data-table" style="width:100%">
+                <thead>
+                    <tr style="background:#f1f5f9;"><th>Roll</th><th>Name</th><th>UT1</th><th>HY</th><th>UT2</th><th>Final</th></tr>
+                </thead>
+                <tbody id="bulkBody"></tbody>
+            </table>
+        </div>
+        <button onclick="saveBulkData()" style="background: #10b981;"><i class="fas fa-cloud-upload-alt"></i> Save Entire Class</button>
+    </div>
+    
+    <button class="btn-print" onclick="showReportCard()" style="background:#10b981; margin-top:20px;"><i class="fas fa-print"></i> Generate Report Card</button>
+</div>
+<div class="school-header">
+    <img src="/image/school-logo/Capture_LOGO.png" alt="School Logo" style="height: 80px; width: auto; margin-bottom: 10px;">
+   
+</div>
+<div id="reportCard">
+    <div class="school-header">
+        <div class="school-name">NIRMALA INFOSYSTEM DIGITAL SCHOOL</div>
+        <div style="font-weight: bold;">SESSION 2026 | PROGRESS REPORT</div>
+    </div>
+
+    <table class="info-table">
+        <tr style="text-align: left;">
+            <td>NAME: <span id="p_name"></span></td>
+            <td>ROLL: <span id="p_roll"></span></td>
+            <td>CLASS: <span id="p_class"></span></td>
+            <td>RANK: <span id="p_rank"></span></td>
+        </tr>
+    </table>
+
+    <table class="data-table">
+        <thead>
+            <tr><th rowspan="2">SUBJECTS</th><th colspan="2">TERM 1</th><th colspan="2">TERM 2</th><th rowspan="2">TOTAL<br>(200)</th><th rowspan="2">GRADE</th></tr>
+            <tr><th>UT-1 (25)</th><th>HY (75)</th><th>UT-2 (25)</th><th>FINAL (75)</th></tr>
+        </thead>
+        <tbody id="p_marks_body"></tbody>
+    </table>
+
+    <div class="flex-container">
+        <table class="data-table" style="flex: 1.2;">
+            <thead><tr><th>TRAITS</th><th>GRADE</th></tr></thead>
+            <tbody id="p_traits_body"></tbody>
+        </table>
+        <div style="flex: 0.8; border: 1px solid #000; padding: 15px; height: fit-content;">
+            <center><b>SUMMARY</b></center><hr>
+            <p>Grand Total: <span id="p_grand"></span> / <span id="p_max"></span></p>
+            <p>Percentage: <span id="p_per"></span>%</p>
+            <p>Attendance Grade: <span id="p_att"></span></p>
+            <p>Result: <b id="p_status"></b></p>
+        </div>
+    </div>
+    <div class="footer-sigs" style="display:flex; justify-content: space-between; margin-top: 40px;">
+        <span>Parent Sign</span><span>Teacher Sign</span><span>Principal Seal</span>
+    </div>
+</div>
+
+<script>
+    const traitsList = ["Attendance", "Discipline", "Neatness", "Leadership", "Responsibility", "Confidence", "Handwriting", "Manners"];
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+
+    // Load Traits
+    const tDiv = document.getElementById('traitsInputs');
+    traitsList.forEach(t => {
+        tDiv.innerHTML += `<div><label>${t}</label><select id="t_${t}"><option value="A+">A+</option><option value="A">A</option><option value="B">B</option></select></div>`;
+    });
+    function toggleEntryMode(mode) {
+        const single = document.getElementById('singleSection');
+        const bulk = document.getElementById('bulkSection');
+        const sDiv = document.getElementById('studentSelectDiv');
+        const cls = document.getElementById('fClass').value;
+
+        if(mode === 'bulk') {
+            if(!cls) return alert("Please select Class first!");
+            single.style.display = 'none';
+            sDiv.style.display = 'none';
+            bulk.style.display = 'block';
+            loadBulkTable(cls);
+        } else {
+            single.style.display = 'block';
+            sDiv.style.display = 'block';
+            bulk.style.display = 'none';
+        }
+    }
+
+    function loadStudents() {
+        const cls = document.getElementById('fClass').value;
+        const sel = document.getElementById('sSelect');
+        sel.innerHTML = '<option value="">--Select--</option>';
+        students.filter(s => s.currentClass === cls).forEach(s => {
+            sel.innerHTML += `<option value="${students.indexOf(s)}">${s.name} (#${s.roll})</option>`;
+        });
+    }
+    function loadBulkTable(cls) {
+        const body = document.getElementById('bulkBody');
+        body.innerHTML = '';
+        const sub = document.getElementById('subSelect').value;
+        students.filter(s => s.currentClass === cls).forEach(s => {
+            const m = (s.exams && s.exams[sub]) ? s.exams[sub] : {ut1:'', hy:'', ut2:'', final:''};
+            body.innerHTML += `<tr data-idx="${students.indexOf(s)}">
+                <td>${s.roll}</td><td>${s.name}</td>
+                <td><input type="number" class="b-ut1" value="${m.ut1}" style="width:50px"></td>
+                <td><input type="number" class="b-hy" value="${m.hy}" style="width:50px"></td>
+                <td><input type="number" class="b-ut2" value="${m.ut2}" style="width:50px"></td>
+                <td><input type="number" class="b-final" value="${m.final}" style="width:50px"></td>
+            </tr>`;
+        });
+    }
+
+    function saveBulkData() {
+        const sub = document.getElementById('subSelect').value;
+        document.querySelectorAll('#bulkBody tr').forEach(row => {
+            const idx = row.dataset.idx;
+            const marks = {
+                ut1: parseInt(row.querySelector('.b-ut1').value) || 0,
+                hy: parseInt(row.querySelector('.b-hy').value) || 0,
+                ut2: parseInt(row.querySelector('.b-ut2').value) || 0,
+                final: parseInt(row.querySelector('.b-final').value) || 0
+            };
+            if(!students[idx].exams) students[idx].exams = {};
+            students[idx].exams[sub] = marks;
+        });
+        localStorage.setItem('students', JSON.stringify(students));
+        showToast("Class Data Saved!");
+    }
+
+    function saveAllData() {
+        const sIdx = document.getElementById('sSelect').value;
+        const sub = document.getElementById('subSelect').value;
+        if(sIdx === "") return alert("Select Student!");
+
+        const ut1 = parseInt(document.getElementById('ut1').value) || 0;
+        const hy = parseInt(document.getElementById('hy').value) || 0;
+        const ut2 = parseInt(document.getElementById('ut2').value) || 0;
+        const final = parseInt(document.getElementById('final').value) || 0;
+
+        // Validation Logic
+        if(ut1 > 25 || ut2 > 25) return alert("UT marks 25 se zyada nahi ho sakte!");
+        if(hy > 75 || final > 75) return alert("Exam marks 75 se zyada nahi ho sakte!");
+
+        if(!students[sIdx].exams) students[sIdx].exams = {};
+        students[sIdx].exams[sub] = { ut1, hy, ut2, final };
+
+        if(!students[sIdx].traits) students[sIdx].traits = {};
+        traitsList.forEach(t => students[sIdx].traits[t] = document.getElementById('t_'+t).value);
+
+        calculateRanks(students[sIdx].currentClass);
+        localStorage.setItem('students', JSON.stringify(students));
+        
+        showToast("Validated Marks Saved!");
+        ['ut1','hy','ut2','final'].forEach(id => document.getElementById(id).value = "");
+    }
+
+    function calculateRanks(cls) {
+        let clsList = students.filter(s => s.currentClass === cls);
+        clsList.forEach(s => {
+            let total = 0;
+            if(s.exams) for(let sub in s.exams) total += (s.exams[sub].ut1 + s.exams[sub].hy + s.exams[sub].ut2 + s.exams[sub].final);
+            s.grandTotal = total;
+        });
+        clsList.sort((a,b) => b.grandTotal - a.grandTotal);
+        clsList.forEach((s, i) => s.rank = i + 1);
+    }
+
+    function showReportCard() {
+        const sIdx = document.getElementById('sSelect').value;
+        if(sIdx === "") return alert("Select Student!");
+        const s = students[sIdx];
+        
+        document.getElementById('p_name').innerText = s.name;
+        document.getElementById('p_roll').innerText = s.roll;
+        document.getElementById('p_class').innerText = s.currentClass;
+        document.getElementById('p_rank').innerText = s.rank || '1';
+
+        let mHtml = ''; let gTotal = 0; let sCount = 0;
+        for(let sub in s.exams) {
+            let m = s.exams[sub]; let st = m.ut1 + m.hy + m.ut2 + m.final;
+            gTotal += st; sCount++;
+            mHtml += `<tr><td>${sub}</td><td>${m.ut1}</td><td>${m.hy}</td><td>${m.ut2}</td><td>${m.final}</td><td>${st}</td><td>${st>=180?'A+':'A'}</td></tr>`;
+        }
+        document.getElementById('p_marks_body').innerHTML = mHtml;
+
+        let tHtml = '';
+        for(let t in s.traits) tHtml += `<tr><td>${t}</td><td>${s.traits[t]}</td></tr>`;
+        document.getElementById('p_traits_body').innerHTML = tHtml;
+
+        document.getElementById('p_grand').innerText = gTotal;
+        document.getElementById('p_max').innerText = sCount * 200;
+        document.getElementById('p_per').innerText = sCount > 0 ? (gTotal/(sCount*200)*100).toFixed(1) : 0;
+        document.getElementById('p_att').innerText = s.traits.Attendance || 'A+';
+        document.getElementById('p_status').innerText = "PASSED";
+        window.print();
+    }
+
+    function showToast(m) {
+        const t = document.createElement('div');
+        t.style.cssText = "position:fixed;top:20px;right:20px;background:#10b981;color:white;padding:15px;border-radius:10px;z-index:9999;";
+        t.innerText = m; document.body.appendChild(t);
+        setTimeout(() => t.remove(), 2000);
+    }
+</script>
+</body>
+</html>

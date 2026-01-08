@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Campus Connect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent: #ec4899;
+            --bg: #0f172a; 
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+            min-height: 100vh; /* Fixed: height ki jagah min-height use karein */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px; /* Mobile ke liye safe margin */
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1100px;
+            padding: 20px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .header-section {
+            margin-bottom: 40px; /* Thoda kam kiya desktop ke liye */
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header-section h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem); /* Dynamic Font Size */
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-section p {
+            color: #94a3b8;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            margin-top: 10px;
+        }
+
+        .portal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .portal-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px 25px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            font-size: 30px;
+            color: white;
+        }
+
+        .admin-box { background: linear-gradient(135deg, #ef4444, #991b1b); }
+        .teacher-box { background: linear-gradient(135deg, #6366f1, #3730a3); }
+        .student-box { background: linear-gradient(135deg, #10b981, #065f46); }
+
+        .portal-card h3 { font-size: 1.4rem; margin-bottom: 10px; color: white; }
+        .portal-card p { color: #94a3b8; font-size: 0.85rem; line-height: 1.5; }
+
+        .footer-info {
+            margin-top: 20px;
+            color: #475569;
+            font-size: 0.85rem;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .portal-grid {
+                grid-template-columns: 1fr; /* Mobile par single column */
+                gap: 20px;
+                width: 100%;
+                max-width: 400px; /* Card ki width limit karein */
+                margin: 0 auto 30px;
+            }
+
+            .header-section { margin-bottom: 30px; }
+            
+            .portal-card { padding: 30px 20px; }
+
+            .footer-info {
+                position: static; /* Mobile par overlap na ho isliye static */
+                margin-top: 30px;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header-section">
+            <h1>Digital Campus Connect 🎓</h1>
+            <p>Your gateway to seamless school management. Choose your role.</p>
+        </header>
+
+        <div class="portal-grid">
+            <a href="admin_login.html" class="portal-card">
+                <div class="icon-box admin-box"><i class="fas fa-user-shield"></i></div>
+                <h3>Administrator</h3>
+                <p>Full control over the system, user management, and global configurations.</p>
+            </a>
+
+            <a href="teacher_login.html" class="portal-card">
+                <div class="icon-box teacher-box"><i class="fas fa-chalkboard-teacher"></i></div>
+                <h3>Teacher</h3>
+                <p>Manage your classes, post updates, and track student attendance daily.</p>
+            </a>
+
+            <a href="student_login.html" class="portal-card">
+                <div class="icon-box student-box"><i class="fas fa-user-graduate"></i></div>
+                <h3>Student</h3>
+                <p>Access your homework, view notices, and stay updated with school events.</p>
+            </a>
+        </div>
+
+        <footer class="footer-info">
+            Crafted with <i class="fas fa-heart" style="color: #ec4899;"></i> by Nirmala Infosystem | &copy; 2026 Digital School
+        </footer>
+    </div>
+
+</body>
+</html>

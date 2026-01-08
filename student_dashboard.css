@@ -1,0 +1,135 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+    padding-bottom: 80px;
+}
+.header {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    padding: 30px 20px 70px; /* Gap for image overlap */
+    border-radius: 0 0 35px 35px;
+}
+
+.profile-info h2 { font-size: 19px; font-weight: 600; margin: 0; }
+.profile-info p { font-size: 12px; opacity: 0.8; margin-top: 5px; }
+
+/* Dashboard Avatar Fix (Matches dashboard 2.JPG) */
+.dashboard-avatar-section {
+    margin-top: -60px; /* Pull image up into purple area */
+    text-align: center;
+    position: relative;
+    z-index: 5;
+}
+
+.dashboard-avatar-section img {
+    width: 250px; /* Badi image size */
+    max-width: 80%;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+
+/* .avatar-container {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.edit-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #fff;
+    color: #764ba2;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 1px solid #eee;
+} */
+
+.main-content { padding: 20px; }
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 25px;
+}
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.stat-card {
+    background: white;
+    padding: 15px 5px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+}
+
+.stat-card i { color: #764ba2; font-size: 20px; margin-bottom: 5px; }
+.stat-card h3 { font-size: 14px; margin: 0; color: #333; }
+.stat-card p { font-size: 10px; color: #999; text-transform: uppercase; margin: 0; }
+
+.section-title h3 { font-size: 16px; color: #444; margin-bottom: 10px; }
+
+.notice-card {
+    background: #fff9e6;
+    border-left: 4px solid #ffcc00;
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.timetable-list { background: white; border-radius: 18px; box-shadow: 0 5px 15px rgba(0,0,0,0.02); }
+.time-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+}
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
+    border-radius: 20px 20px 0 0;
+}
+
+.nav-item {
+    cursor: pointer; /* Sabse zaroori */
+    -webkit-tap-highlight-color: transparent; /* Mobile touch blue box hatane ke liye */
+}
+
+
+.nav-item:active {
+    transform: scale(0.9); /* Click karne par button thoda dabega, jo real feel dega */
+}
+.nav-item i { font-size: 22px; display: block; margin-bottom: 2px; }
+.nav-item span { font-size: 10px; font-weight: 500; }

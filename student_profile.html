@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile</title>
+    <link rel="stylesheet" href="student_dashboard.css">
+    <link rel="stylesheet" href="student_profile.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="profile-header">
+        <div class="avatar-container" onclick="document.getElementById('fileInput').click()">
+            <img src="/image/class-1st/index-img1.jpg" alt="Student Photo" id="userPhoto">
+            <div class="edit-badge"><i class="fas fa-camera"></i></div>
+            <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="previewImage(event)">
+        </div>
+        
+        <h2 id="profName">Riya Kumari</h2>
+        <div class="blood-badge" id="headerBlood"><i class="fas fa-tint"></i> Blood Group: B+</div>
+        <p id="profId">Roll No: 101 | Class: 10th-B</p>
+    </div>
+
+    <div class="main-content">
+        <div class="info-group">
+            <div class="info-item highlight">
+                <i class="fas fa-phone-alt"></i>
+                <div class="details">
+                    <span>Parent's Mobile Number</span>
+                    <strong>+91 98765 43210</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-mobile-alt"></i>
+                <div class="details">
+                    <span>Mobile Number</span>
+                    <strong>+91 98765 43210</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-user-friends"></i>
+                <div class="details">
+                    <span>Father's Name</span>
+                    <strong id="profFather">Mr. Sharma</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <div class="details">
+                    <span>Address</span>
+                    <strong>G-24, Civil Lines, Delhi</strong>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <i class="fas fa-heartbeat"></i>
+                <div class="details">
+                    <span>Blood Group</span>
+                    <strong id="profBlood">B+ Positive</strong>
+                </div>
+            </div>
+        </div>
+
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+    </div>
+
+    <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='student_dashboard.html'">
+        <i class="fas fa-home"></i><span>Home</span>
+    </div>
+    <div class="nav-item" id="nav-subjects" onclick="window.location.href='subjects.html'">
+        <i class="fas fa-book"></i><span>Subjects</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='final-result.html'">
+        <i class="fas fa-file-alt"></i><span>Exams</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="window.location.href='student_profile.html'">
+        <i class="fas fa-user"></i><span>Profile</span>
+    </div>
+</div>
+
+    <script src="student_profile.js"></script>
+</body>
+</html>

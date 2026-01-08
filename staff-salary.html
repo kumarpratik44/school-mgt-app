@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Payroll Hub | School Management</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --secondary: #64748b;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --white: #ffffff;
+        --glass: rgba(255, 255, 255, 0.95);
+        --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 20px;
+        color: #1e293b;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .payroll-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .control-card {
+        background: var(--glass);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        gap: 20px;
+        align-items: flex-end;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--secondary);
+      }
+
+      select,
+      input {
+        padding: 12px 15px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 14px;
+        background: white;
+        transition: 0.3s;
+      }
+
+      .btn-calc {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .table-wrapper {
+        background: var(--white);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 1px solid #e2e8f0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        background: #f8fafc;
+        padding: 18px;
+        text-align: left;
+        font-size: 13px;
+        color: var(--secondary);
+        border-bottom: 2px solid #f1f5f9;
+      }
+      td {
+        padding: 18px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 14px;
+      }
+
+      .badge {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .paid {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .pending {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .salary-text {
+        font-weight: 700;
+        color: var(--primary);
+      }
+      .adj-input {
+        width: 80px;
+        padding: 8px;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        text-align: center;
+      }
+
+      .btn-pay {
+        background: var(--success);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 768px) {
+        .control-card {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+        thead {
+          display: none;
+        }
+        tr {
+          background: white;
+          margin-bottom: 20px;
+          border-radius: 20px;
+          padding: 15px;
+          box-shadow: var(--shadow);
+        }
+        td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 5px;
+          border: none;
+          border-bottom: 1px dashed #eee;
+        }
+        td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: var(--secondary);
+        }
+      }
+      /* Salary Slip Styling */
+#salarySlip { display: none; padding: 30px; border: 2px solid #333; width: 800px; margin: auto; background: white; }
+
+@media print {
+    body * { visibility: hidden; } /* Sab kuch chhupa do */
+    #salarySlip, #salarySlip * { visibility: visible; } /* Sirf slip dikhao */
+    #salarySlip { display: block !important; position: absolute; left: 0; top: 0; width: 100%; border: none; }
+    .no-print { display: none !important; }
+}
+
+.slip-header { text-align: center; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+.slip-body { display: flex; justify-content: space-between; margin-bottom: 20px; }
+.slip-table { width: 100%; border-collapse: collapse; }
+.slip-table th, .slip-table td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+.total-row { background: #f1f5f9; font-weight: bold; font-size: 1.1rem; }
+/* Normal screen par slip nahi dikhegi */
+#salarySlip { 
+    display: none; 
+}
+
+/* Print ke waqt ka magic */
+@media print {
+    /* 1. Poore page ki har cheez ko hide karo */
+    body * { 
+        visibility: hidden; 
+        margin: 0;
+    }
+    
+    /* 2. Sirf salary slip wale section aur uske andar ke contents ko dikhao */
+    #salarySlip, #salarySlip * { 
+        visibility: visible; 
+    }
+
+    /* 3. Slip ko page ke top par set karo */
+    #salarySlip { 
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 20px;
+        border: none;
+    }
+
+    /* 4. Browser ke extra headers (URL, Date) hide karne ke liye */
+    @page {
+        size: auto;
+        margin: 0mm;
+    }
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="payroll-header">
+        <h1>
+          <i class="fas fa-wallet" style="color: var(--primary)"></i> Salary &
+          Payroll Hub
+        </h1>
+        <div id="currentTime"></div>
+      </div>
+
+      <div class="control-card">
+        <div class="form-group">
+          <label>Salary Month</label>
+          <select id="salMonth">
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06" selected>June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </div>
+        <div
+          class="form-group"
+          style="
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            border-left: 2px solid #e2e8f0;
+            padding-left: 15px;
+          "
+        >
+          <input
+            type="checkbox"
+            id="enablePF"
+            onchange="calculatePayroll()"
+            style="width: 18px; height: 18px; cursor: pointer"
+          />
+          <label style="margin: 0">Apply PF (Provident Fund)?</label>
+          <input
+            type="number"
+            id="pfRate"
+            value="12"
+            style="width: 55px; padding: 5px; border-radius: 8px"
+            placeholder="%"
+          />
+        </div>
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="salYear" value="2026" />
+        </div>
+        <button class="btn-calc" onclick="calculatePayroll()">
+          <i class="fas fa-sync-alt"></i> Generate Payroll
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Staff Details</th>
+              <th>Base & Att.</th>
+              <th>Bonus/Extra</th>
+              <th>Advance/Fine</th>
+              <th>Net Payable</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="payrollList"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="salarySlip">
+    <div class="slip-header">
+        <h2 id="schoolNameHeader">ENTERPRISE CONNECT SCHOOL</h2>
+        <p>Monthly Salary Slip - <span id="slipMonthYear"></span></p>
+    </div>
+    
+    <div class="slip-body">
+        <div>
+            <strong>Staff Name:</strong> <span id="slipName"></span><br>
+            <strong>Designation:</strong> <span id="slipDesig"></span>
+        </div>
+        <div style="text-align: right;">
+            <strong>Print Date:</strong> <span id="slipDate"></span><br>
+            <strong>Status:</strong> <span style="color:green; font-weight:bold;">PAID</span>
+        </div>
+    </div>
+
+    <table class="slip-table">
+        <thead>
+            <tr style="background: #eee;">
+                <th>Description</th>
+                <th>Earnings</th>
+                <th>Deductions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Basic Salary</td>
+                <td>₹<span id="slipBase"></span></td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Bonus / Incentives</td>
+                <td>₹<span id="slipBonus"></span></td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Attendance Penalty</td>
+                <td>-</td>
+                <td style="color:red">₹<span id="slipAttDed"></span></td>
+            </tr>
+            <tr>
+                <td>PF Deduction (<span id="slipPfRate"></span>%)</td>
+                <td>-</td>
+                <td style="color:red">₹<span id="slipPfAmt"></span></td>
+            </tr>
+            <tr>
+                <td>Advance / Fine</td>
+                <td>-</td>
+                <td style="color:red">₹<span id="slipAdv"></span></td>
+            </tr>
+            <tr class="total-row">
+                <td>NET PAYABLE</td>
+                <td colspan="2" style="text-align: right; color: #2563eb;">₹<span id="slipNet"></span></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div style="margin-top: 50px; display: flex; justify-content: space-between;">
+        <div style="border-top: 1px solid #333; width: 150px; text-align: center;">Staff Signature</div>
+        <div style="border-top: 1px solid #333; width: 150px; text-align: center;">Principal/Admin</div>
+    </div>
+</div>
+
+    <script>
+
+    let staffData = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    let attendanceData = JSON.parse(localStorage.getItem("staffAttendance")) || {};
+    let payrollStatus = JSON.parse(localStorage.getItem("staffPayrollStatus")) || {};
+
+    function calculatePayroll() {
+        const month = document.getElementById("salMonth").value;
+        const year = document.getElementById("salYear").value;
+        const isPFEnabled = document.getElementById("enablePF").checked;
+        const pfRate = parseFloat(document.getElementById("pfRate").value) || 0;
+        const list = document.getElementById("payrollList");
+        list.innerHTML = "";
+
+        staffData.forEach((staff) => {
+            // Actual Attendance Calculation
+            let absents = 0;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const datePrefix = `${year}-${month}`; // e.g., 2026-02
+
+            // Attendance check loop
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateKey = `${datePrefix}-${d.toString().padStart(2, '0')}`;
+                ['Teaching', 'Non-Teaching', 'Admin'].forEach(cat => {
+                    const daily = attendanceData[`${dateKey}_${cat}`];
+                    if (daily) {
+                        const record = daily.find(r => r.id === staff.id);
+                        if (record && record.status === 'A') absents++;
+                    }
+                });
+            }
+
+            const perDay = staff.salary / daysInMonth;
+            const attDeduction = Math.round(perDay * absents);
+            
+            // Adjustments [cite: 13, 14, 28, 29]
+            const bonusId = `bonus_${staff.id}_${month}_${year}`;
+            const advanceId = `adv_${staff.id}_${month}_${year}`;
+            const savedAdjustments = JSON.parse(localStorage.getItem("salaryAdjustments")) || {};
+            const bonus = parseInt(savedAdjustments[bonusId]) || 0;
+            const advance = parseInt(savedAdjustments[advanceId]) || 0;
+
+            // PF Calculation logic based on your PDF example (12%) [cite: 8, 17, 39]
+            let pfAmount = isPFEnabled ? Math.round((staff.salary * pfRate) / 100) : 0;
+
+            // Final Net Pay calculation [cite: 18, 31, 40]
+            const netPay = (parseInt(staff.salary) - attDeduction + bonus) - (advance + pfAmount);
+            const payID = `${staff.id}_${month}_${year}`;
+            const isPaid = payrollStatus[payID];
+
+            list.innerHTML += `
+                <tr>
+                    <td data-label="Staff Details"><b>${staff.name}</b><br><small>${staff.designation}</small></td>
+                    <td data-label="Base & Att.">₹${staff.salary}<br><small style="color:red">Abs: ${absents} (-₹${attDeduction})</small></td>
+                    <td data-label="Bonus"><input type="number" class="adj-input" value="${bonus}" onchange="saveAdjustment('${bonusId}', this.value)" ${isPaid ? 'disabled' : ''}></td>
+                    <td data-label="Advance"><input type="number" class="adj-input" value="${advance}" onchange="saveAdjustment('${advanceId}', this.value)" ${isPaid ? 'disabled' : ''}></td>
+                    <td data-label="PF">₹${pfAmount}</td>
+                    <td data-label="Net Payable" class="salary-text">₹${netPay}</td>
+                    <td data-label="Status"><span class="badge ${isPaid ? "paid" : "pending"}">${isPaid ? "PAID" : "PENDING"}</span></td>
+                    <td data-label="Actions">
+                        ${!isPaid ? 
+                            `<button class="btn-pay" onclick="markAsPaid('${payID}')">Mark Paid</button>` : 
+                            `<button class="btn-print" onclick="printIndividualSlip('${staff.id}', '${month}', '${year}', ${staff.salary}, ${bonus}, ${advance}, ${pfAmount}, ${attDeduction}, ${netPay})"><i class="fas fa-file-invoice"></i> Slip</button>`
+                        }
+                    </td>
+                </tr>`;
+        });
+    }
+
+    // Individual Slip Printing Logic
+    function printIndividualSlip(id, month, year, base, bonus, adv, pf, att, net) {
+        const staff = staffData.find(s => s.id === id);
+        if(!staff) return;
+
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        
+        // Template mein data populate karna
+        document.getElementById('slipMonthYear').innerText = `${monthNames[parseInt(month)-1]} ${year}`;
+        document.getElementById('slipName').innerText = staff.name;
+        document.getElementById('slipDesig').innerText = staff.designation;
+        document.getElementById('slipDate').innerText = new Date().toLocaleDateString();
+        
+        document.getElementById('slipBase').innerText = base;
+        document.getElementById('slipBonus').innerText = bonus;
+        document.getElementById('slipAttDed').innerText = att;
+        document.getElementById('slipPfAmt').innerText = pf;
+        document.getElementById('slipPfRate').innerText = document.getElementById('pfRate').value;
+        document.getElementById('slipAdv').innerText = adv;
+        document.getElementById('slipNet').innerText = net;
+
+        // Sirf Slip Area ko print karna
+        setTimeout(() => { window.print(); }, 500);
+    }
+
+    function saveAdjustment(key, val) {
+        let adj = JSON.parse(localStorage.getItem("salaryAdjustments")) || {};
+        adj[key] = val || 0;
+        localStorage.setItem("salaryAdjustments", JSON.stringify(adj));
+        calculatePayroll();
+    }
+
+    function markAsPaid(id) {
+        if(confirm("Salary pay hone ke baad adjustments lock ho jayenge. Continue?")) {
+            payrollStatus[id] = true;
+            localStorage.setItem("staffPayrollStatus", JSON.stringify(payrollStatus));
+            calculatePayroll();
+        }
+    }
+
+    window.onload = calculatePayroll;
+</script>
+
+  </body>
+</html>

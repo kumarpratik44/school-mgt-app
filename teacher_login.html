@@ -1,0 +1,41 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Portal - Login</title>
+    <link rel="stylesheet" href="teacher_login.css"> <style>
+        /* Teacher ke liye Teal Theme override */
+        .header { background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important; }
+        .btn-login { background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important; }
+        .footer a { color: #00b09b !important; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="header">
+            <div class="logo-circle">👨‍🏫</div>
+            <h2>Teacher Portal</h2>
+            
+        </div>
+        <div class="login-box-content">
+            <img src="/image/teacher/teacher-img1.jpg" class="avatar-img">
+            <h3>Teacher Login</h3>
+            <form id="teacherLoginForm">
+                <div class="input-field">
+                    <input type="text" id="tId" placeholder="Teacher ID (Try: T101)" required>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="tPass" placeholder="Password" required>
+                </div>
+                <p id="tError" class="error"></p>
+                <button type="submit" class="btn-login">Login as Teacher</button>
+            </form>
+            <div class="footer">
+                <a href="index.html">Are you a Student? Login here</a>
+            </div>
+        </div>
+    </div>
+    <script src="teacher_login.js"></script>
+</body>
+</html>

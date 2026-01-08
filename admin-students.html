@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Master Portal | Enterprise Connect</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #0056b3;
+        --bg: #f1f5f9;
+        --text: #1e293b;
+        --danger: #e11d48;
+        --success: #059669;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: var(--bg);
+        padding: 20px;
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .back-btn {
+        text-decoration: none;
+        color: var(--primary);
+        font-weight: 600;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      /* Summary Cards */
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid #cbd5e1;
+      }
+      .stat-card h4 {
+        color: #64748b;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .stat-card .val {
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin-top: 5px;
+      }
+
+      /* Form Styling */
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        margin-bottom: 30px;
+      }
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+      }
+      input,
+      select {
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        outline: none;
+        width: 100%;
+        font-size: 0.95rem;
+      }
+      input:focus {
+        border-color: var(--primary);
+      }
+      .btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+      .btn:hover {
+        background: #004494;
+      }
+
+      /* Table Styling */
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      th {
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+
+      .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .badge-paid {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .badge-due {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .action-btn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 1.1rem;
+        margin-right: 12px;
+        transition: 0.2s;
+      }
+      .action-btn:hover {
+        transform: scale(1.2);
+      }
+
+      @media (max-width: 768px) {
+        .input-grid {
+          grid-template-columns: 1fr;
+        }
+        th,
+        td {
+          padding: 12px 10px;
+          font-size: 0.85rem;
+        }
+        .container {
+          padding: 0;
+        }
+      }
+      /* Table ke liye special mobile fix */
+      .table-container {
+        background: white;
+        border-radius: 15px;
+        overflow-x: auto; /* Ye scroll bar enable karta hai */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        -webkit-overflow-scrolling: touch; /* Mobile smooth scrolling */
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 700px; /* Force minimum width to prevent squeezing */
+      }
+
+      /* Action buttons ko mobile par bada aur clear dikhane ke liye */
+      .action-btn {
+        border: none;
+        background: #f1f5f9;
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 8px;
+        border-radius: 8px;
+        margin-right: 5px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Swipe hint for mobile */
+      .swipe-hint {
+        display: none;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 0.75rem;
+        margin-bottom: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .swipe-hint {
+          display: block;
+        } /* Sirf mobile par dikhega */
+      }
+     /* TC PRINT STYLES */
+        #tcPrintout { display: none; }
+        @media print {
+            body * { display: none !important; }
+            #tcPrintout { display: block !important; width: 100%; padding: 40px; border: 12px double #000; background: white; color: black; position: absolute; top: 0; left: 0; }
+            #tcPrintout * { display: block; visibility: visible; }
+            .tc-header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 20px; margin-bottom: 30px; }
+            .tc-title { font-size: 30px; font-weight: 800; }
+            .tc-body { line-height: 2.2; font-size: 18px; margin-top: 20px; }
+            .tc-row { border-bottom: 1px dotted #000; font-weight: bold; padding: 0 10px; display: inline-block; min-width: 150px; }
+        }
+            </style>
+  </head>
+  <body>
+    <div class="container">
+      <a href="admin-dashboard.html" class="back-btn"
+        ><i class="fas fa-arrow-left"></i> Back to Dashboard</a
+      >
+
+      <h1 style="margin-bottom: 25px">Student Master Portal</h1>
+
+      <div class="summary-grid">
+        <div class="stat-card" style="border-left-color: #3b82f6">
+          <h4>Expected Fees</h4>
+          <div class="val" id="totalExpected" style="color: #1e40af">₹0</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #10b981">
+          <h4>Collected</h4>
+          <div class="val" id="totalCollected" style="color: #065f46">₹0</div>
+        </div>
+        <div class="stat-card" style="border-left-color: #f43f5e">
+          <h4>Total Due</h4>
+          <div class="val" id="totalDue" style="color: #9f1239">₹0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <i class="fas fa-user-plus" style="color: var(--primary)"></i>
+          Detailed Student Registration
+        </h3>
+        <div class="input-grid">
+          <input type="text" id="sName" placeholder="Student Full Name" />
+          <input type="text" id="sRoll" placeholder="Admission No / Roll No" />
+          <input type="text" id="sFather" placeholder="Father's Name" />
+          <input type="date" id="sDob" title="Date of Birth" />
+          <input type="text" id="sClass" placeholder="Class" />
+
+          <select id="sGender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <input
+            type="text"
+            id="sCaste"
+            placeholder="Caste (e.g. Hindu-Brahmin)"
+          />
+          <select id="sCategory">
+            <option value="">Select Category</option>
+            <option value="General">General</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+          </select>
+
+          <select id="sCycle">
+            <option value="12">Monthly Plan</option>
+            <option value="4">Quarterly Plan</option>
+            <option value="1">Annual Plan</option>
+          </select>
+          <input
+            type="number"
+            id="sAmount"
+            placeholder="Amount per Cycle (₹)"
+          />
+
+          <button class="btn" onclick="addStudent()">Register Student</button>
+        </div>
+      </div>
+
+      <div class="card" style="padding: 10px">
+        <div class="swipe-hint">
+          <i class="fas fa-arrow-left"></i> Swipe left to see actions
+          <i class="fas fa-arrow-right"></i>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Roll No</th>
+                <th>Student Name</th>
+                <th>Expected</th>
+                <th>Balance</th>
+                <th>Status</th>
+                <th style="text-align: center; min-width: 150px">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <div id="tcPrintout">
+    <div id="tcPrintout">
+    <div class="tc-header">
+        <div style="font-size: 14px;">School Code: 09876 | Recognition No: 2026/A1</div>
+        <div class="tc-title">NIRMALA INFOSYSTEM DIGITAL SCHOOL</div>
+        <p>Affiliated to State Board | Session 2026</p>
+        <h2 style="margin-top: 15px; text-decoration: underline;">TRANSFER CERTIFICATE</h2>
+    </div>
+
+    <div class="tc-body">
+        <p>This is to certify that Master/Miss <span id="tc_name" class="tc-row"></span> 
+        son/daughter of Shri <span id="tc_father" class="tc-row"></span> 
+        was a student of this school in Class <span id="tc_class" class="tc-row"></span>.</p>
+
+        <p>His/Her Admission Number is <span id="tc_roll" class="tc-row"></span> 
+        and Date of Birth as per records is <span id="tc_dob" class="tc-row"></span>.</p>
+
+        <p>He/She has paid all school dues and his/her character has been found to be <b>GOOD</b>.</p>
+
+        <p>Reason for leaving school: <span id="tc_reason" class="tc-row">HIGHER STUDIES</span>.</p>
+    </div>
+
+    <div style="margin-top: 100px; display: flex; justify-content: space-between;">
+        <div style="text-align: center;"><br><b>Prepared By</b></div>
+        <div style="text-align: center;"><br><b>Class Teacher</b></div>
+        <div style="text-align: center;"><br><b>Principal (Seal)</b></div>
+    </div>
+</div>
+  <script>
+      let students = JSON.parse(localStorage.getItem("students")) || [];
+
+      // 1. Data Save karne ka sahi tarika
+function addStudent() {
+    // Inputs se value uthana (IDs dhyan se check karein)
+    const name = document.getElementById('sName').value.trim();
+    const roll = document.getElementById('sRoll').value.trim();
+    const father = document.getElementById('sFather').value.trim(); // Father's Name fetch
+    const dob = document.getElementById('sDob').value;             // DOB fetch
+    const sClass = document.getElementById('sClass').value.trim(); // Class fetch
+    const gender = document.getElementById('sGender').value;       // Gender fetch
+    const caste = document.getElementById('sCaste').value.trim();  // Caste fetch
+    const category = document.getElementById('sCategory').value;   // Category fetch
+    const cycle = document.getElementById('sCycle').value;
+    const amount = document.getElementById('sAmount').value;
+
+    // Validation: Zaroori cheezein khali nahi honi chahiye
+    if(!name || !roll || !amount || !gender) {
+        return alert("Please fill Name, Roll No, Gender and Amount!");
+    }
+
+    const totalAnnual = parseFloat(amount) * parseInt(cycle);
+
+    // Naya Object jisme saari details hain
+    const newStudent = {
+        id: Date.now(),
+        name,
+        roll,
+        father,
+        dob,
+        currentClass: sClass,
+        gender,
+        caste,
+        category,
+        feeCycle: (cycle == "12") ? "Monthly" : (cycle == "4") ? "Quarterly" : "Annual",
+        totalFees: totalAnnual,
+        paidAmount: 0,
+        history: [],
+        marksData: null
+    };
+
+    // LocalStorage mein save karna
+    students.push(newStudent);
+    localStorage.setItem('students', JSON.stringify(students));
+    
+    // Form ko reset karna
+    resetForm();
+    
+    // Table ko update karna
+    renderStudents();
+    alert("Student Registered with all details!");
+}
+
+// 2. Form Reset Function (Taaki purana data hata sakein)
+function resetForm() {
+    const ids = ['sName', 'sRoll', 'sFather', 'sDob', 'sClass', 'sCaste', 'sAmount'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.value = '';
+    });
+    document.getElementById('sGender').selectedIndex = 0;
+    document.getElementById('sCategory').selectedIndex = 0;
+}
+
+// 3. Table mein data dikhane ka function
+function renderStudents() {
+    const tbody = document.getElementById('studentList');
+    if(!tbody) return;
+    
+    tbody.innerHTML = '';
+    let expected = 0, collected = 0, due = 0;
+
+    students.forEach((s, index) => {
+        const balance = s.totalFees - s.paidAmount;
+        expected += s.totalFees;
+        collected += s.paidAmount;
+        due += balance;
+
+        tbody.innerHTML += `
+            <tr>
+                <td><b>#${s.roll}</b></td>
+                <td>
+                    <div style="font-weight:600">${s.name}</div>
+                    <small style="color:gray">${s.gender} | ${s.category}</small>
+                </td>
+                <td>₹${s.totalFees.toLocaleString()}</td>
+                <td style="color: ${balance > 0 ? 'red' : 'green'}; font-weight:700">₹${balance.toLocaleString()}</td>
+                <td><span class="badge ${balance <= 0 ? 'badge-paid' : 'badge-due'}">${balance <= 0 ? 'Paid' : 'Due'}</span></td>
+                <td>
+                    <button class="action-btn" onclick="payFees(${index})" style="color:green"><i class="fas fa-hand-holding-usd"></i></button>
+                    <button class="action-btn" onclick="downloadTC(${index})" style="color:orange"><i class="fas fa-file-contract"></i></button>
+                    <button class="action-btn" onclick="deleteStudent(${index})" style="color:red"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+
+    // Summary Cards update
+    document.getElementById('totalExpected').innerText = "₹" + expected.toLocaleString();
+    document.getElementById('totalCollected').innerText = "₹" + collected.toLocaleString();
+    document.getElementById('totalDue').innerText = "₹" + due.toLocaleString();
+}
+      
+
+
+      function payFees(index) {
+        let amount = prompt(
+          `Enter payment amount for ${students[index].name}:`
+        );
+        if (amount && !isNaN(amount) && amount > 0) {
+          students[index].paidAmount += parseFloat(amount);
+          students[index].history.push({
+            date: new Date().toLocaleDateString(),
+            amount: parseFloat(amount),
+          });
+          localStorage.setItem("students", JSON.stringify(students));
+          renderStudents();
+        }
+      }
+      function downloadTC(index) {
+        const s = students[index];
+        
+        // Data bahrna
+        document.getElementById('tc_name').innerText = s.name.toUpperCase();
+        document.getElementById('tc_father').innerText = s.father ? s.father.toUpperCase() : "---";
+        document.getElementById('tc_class').innerText = s.currentClass;
+        document.getElementById('tc_roll').innerText = s.roll;
+        document.getElementById('tc_dob').innerText = s.dob || "---";
+
+        let reason = prompt("Reason for leaving?", "HIGHER STUDIES");
+        if(reason == null) return;
+        document.getElementById('tc_reason').innerText = reason.toUpperCase();
+
+        // Print
+        setTimeout(() => { window.print(); }, 500);
+    }
+
+      function deleteStudent(index) {
+        if (
+          confirm(
+            "Warning: Deleting this student will erase all fees history. Continue?"
+          )
+        ) {
+          students.splice(index, 1);
+          localStorage.setItem("students", JSON.stringify(students));
+          renderStudents();
+        }
+      }
+
+
+     // Initialize table
+      renderStudents();
+
+
+    </script>
+
+  </body>
+  
+</html>

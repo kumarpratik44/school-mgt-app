@@ -1,0 +1,95 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="student_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="header">
+        <div class="profile-info">
+            <h2 id="dispName">Namaste, Riya Kumari! 👋</h2>
+            <p id="dispClass">Class: 10th-B | F. Name: Mr. Sharma</p>
+        </div>
+    </div>
+    <div class="dashboard-avatar-section">
+        <div class="avatar-container" onclick="document.getElementById('fileInput').click()">
+            <img src="/image/class-1st/index-img1.jpg" 
+                 alt="Student Photo" id="userPhoto">
+            <div class="edit-badge"><i class="fas fa-camera"></i></div>
+            <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="previewImage(event)">
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check"></i>
+                <h3>85%</h3>
+                <p>Attendance</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-rupee-sign"></i>
+                <h3>₹0</h3>
+                <p>Pending Fees</p>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-graduation-cap"></i>
+                <h3>Grade A</h3>
+                <p>Last Result</p>
+            </div>
+        </div>
+
+       <div class="section-title"><h3><i class="fas fa-bullhorn"></i> Notice Board</h3></div>
+        <div class="notice-card">
+            <p>📢 Tomorrow is holiday on the occasion of "School Foundation Day".</p>
+            <span>2 Hours ago</span>
+        </div>
+
+        <div class="section">
+            <h3><i class="fas fa-clock"></i> Today's Timetable</h3>
+            <div class="timetable-list">
+                <div class="time-item"><span>09:00 AM</span> <strong>Mathematics</strong></div>
+                <div class="time-item"><span>09:45 AM</span> <strong>English</strong></div>
+                <div class="time-item"><span>10:30 AM</span> <strong>Science</strong></div>
+                <div class="time-item"><span>11:15 AM</span> <strong>Science (Lab)</strong></div>
+                <div class="time-item"><span>12:00 PM</span> <strong>Lunch Break</strong></div>
+                <div class="time-item"><span>12:30 PM</span> <strong>Hindi</strong></div>
+                <div class="time-item"><span>01:15 PM</span> <strong>S.Science</strong></div>
+                <div class="time-item"><span>02:00 PM</span> <strong>Computer</strong></div>
+                <div class="time-item"><span>02:40 PM</span> <strong>School Off</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.href='student_dashboard.html'">
+            <i class="fas fa-home"></i><span>Home</span>
+        </div>
+        <div class="nav-item" id="nav-subjects" onclick="location.href='subjects.html'">
+            <i class="fas fa-book"></i><span>Subjects</span>
+        </div>
+        <div class="nav-item" onclick="location.href='final-result.html'">
+            <i class="fas fa-file-alt"></i><span>Exams</span>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="location.href='student_profile.html'">
+             <i class="fas fa-user"></i><span>Profile</span>
+        </div>
+    </div>
+</div>
+    <script src="student_profile.js"></script>
+    <script>
+        // Check karne ke liye ki links kaam kar rahe hain
+        console.log("Dashboard Loaded. Navigation Ready.");
+    </script>
+    <script>if (localStorage.getItem("studentActive") !== "true") {
+    window.location.href = "student-login.html";
+}
+</script>
+
+
+</body>
+</html>

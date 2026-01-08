@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exams & Results</title>
+    <link rel="stylesheet" href="student_dashboard.css" />
+    <link rel="stylesheet" href="exams.css" />
+    <link rel="stylesheet" href="final-result.css">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="header">
+      <div class="profile-info">
+        <h2 id="dispName">Exams & Results</h2>
+        <p id="dispClass">Class: 10th-B</p>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="tab-container">
+        <button class="tab-btn active" onclick="showTab('schedule')">
+          Schedule
+        </button>
+        <button class="tab-btn" onclick="showTab('results')">Results</button>
+      </div>
+
+      <div id="schedule" class="tab-content">
+        <div class="exam-card upcoming">
+          <div class="exam-date"><span>15</span><br />Jan</div>
+          <div class="exam-details">
+            <h4>Mathematics - Unit Test 2</h4>
+            <p><i class="far fa-clock"></i> 09:00 AM - 11:00 AM</p>
+            <p><i class="fas fa-book-open"></i> Syllabus: Algebra, Geometry</p>
+          </div>
+        </div>
+
+        <div class="exam-card upcoming">
+          <div class="exam-date"><span>18</span><br />Jan</div>
+          <div class="exam-details">
+            <h4>Science - Unit Test 2</h4>
+            <p><i class="far fa-clock"></i> 09:00 AM - 11:00 AM</p>
+            <p>
+              <i class="fas fa-book-open"></i> Syllabus: Light & Electricity
+            </p>
+          </div>
+        </div>
+
+        <div class="exam-card unit-test">
+          <div class="exam-tag">Unit Test 1</div>
+          <div class="exam-date"><span>10</span><br />Aug</div>
+          <div class="exam-details">
+            <h4>Mathematics</h4>
+            <p><i class="far fa-clock"></i> 08:30 AM</p>
+          </div>
+        </div>
+
+        <div class="exam-card half-yearly">
+          <div class="exam-tag">Half Yearly</div>
+          <div class="exam-date"><span>15</span><br />OCT</div>
+          <div class="exam-details">
+            <h4>Science (Physics/Bio)</h4>
+            <p><i class="far fa-clock"></i> 09:00 AM</p>
+            <p><i class="fas fa-info-circle"></i> Syllabus: Half Syllabus</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="results" class="tab-content" style="display: none">
+        <div class="result-summary">
+          <div class="circle-progress">
+            <h3>8.5</h3>
+            <span>CGPA</span>
+          </div>
+          <p>Overall Performance: <b>Excellent</b></p>
+        </div>
+
+        <div class="result-container">
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>Subject</th>
+                <th>UT-1</th>
+                <th>UT-2</th>
+                <th>Half-Yearly</th>
+                <th>Annual</th>
+                <th>Final Grade</th> </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>English</td>
+                <td>22/25</td>
+                <td>20/25</td>
+                <td>75/100</td>
+                <td>82/100</td>
+                <td><strong>A</strong></td>
+            </tr>
+            <tr>
+                <td>Maths</td>
+                <td>25/25</td>
+                <td>24/25</td>
+                <td>95/100</td>
+                <td>98/100</td>
+                <td><strong>A+</strong></td>
+            </tr>
+            <tr>
+                <td>Science</td>
+                <td>20/25</td>
+                <td>18/25</td>
+                <td>70/100</td>
+                <td>78/100</td>
+                <td><strong>B+</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+    <div id="final-marksheet" class="tab-content" style="display: none">
+      <div class="marksheet-header">
+        <h3>ACADEMIC SESSION 2025-26</h3>
+        <p>FINAL PROGRESS REPORT</p>
+      </div>
+
+      <table class="final-table">
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>UTs (20)</th>
+            <th>H.Y. (80)</th>
+            <th>Annual (100)</th>
+            <th>Total (200)</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mathematics</td>
+            <td>18</td>
+            <td>72</td>
+            <td>92</td>
+            <td><b>182</b></td>
+            <td class="grade-a">A+</td>
+          </tr>
+          <tr>
+            <td>Science</td>
+            <td>15</td>
+            <td>65</td>
+            <td>88</td>
+            <td><b>168</b></td>
+            <td class="grade-a">A</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="final-summary-box">
+        <div class="summary-item">
+          <span>Grand Total</span>
+          <strong>350 / 400</strong>
+        </div>
+        <div class="summary-item">
+          <span>Percentage</span>
+          <strong>87.5%</strong>
+        </div>
+        <div class="summary-item">
+          <span>Result</span>
+          <strong style="color: green">PASSED</strong>
+        </div>
+      </div>
+
+      <button class="download-btn">
+        <i class="fas fa-file-pdf"></i> Download Marksheet
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+    <div class="nav-item" onclick="window.location.href='student_dashboard.html'">
+        <i class="fas fa-home"></i><span>Home</span>
+    </div>
+    <div class="nav-item" id="nav-subjects" onclick="window.location.href='subjects.html'">
+        <i class="fas fa-book"></i><span>Subjects</span>
+    </div>
+    <div class="nav-item" onclick="window.location.href='final-result.html'">
+        <i class="fas fa-file-alt"></i><span>Exams</span>
+    </div>
+    <div class="nav-item" id="nav-profile" onclick="window.location.href='student_profile.html'">
+        <i class="fas fa-user"></i><span>Profile</span>
+    </div>
+
+    <script src="exams.js"></script>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="teacher_dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="teacher-header">
+        <h2 id="tWelcome">Welcome, Teacher! 👨‍🏫</h2>
+        <p>Class 10th-B | Subject: Mathematics</p>
+    </div>
+
+    <div class="t-avatar-section">
+        <img src="/image/teacher/teacher-img1.jpg" alt="Teacher Profile">
+    </div>
+    <div class="selection-container">
+    <div class="selection-box">
+        <div class="select-field">
+            <label><i class="fas fa-graduation-cap"></i> Class</label>
+        <select id="classSelect" onchange="updateStudentList()">
+            <option value="10">Class 10th</option>
+            <option value="9">Class 9th</option>
+            <option value="8">Class 8th</option>
+            <option value="7">Class 7th</option>
+            <option value="6">Class 6th</option>
+            <option value="5">Class 5th</option>
+            <option value="4">Class 4th</option>
+            <option value="3">Class 3th</option>
+            <option value="2">Class 2th</option>
+            <option value="1">Class 1th</option>
+            <option value="UKG">UKG</option>
+            <option value="LKG">LKG</option>
+            <option value="NUR">Nursery</option>
+        </select>
+    </div>
+    <div class="select-field">
+            <label><i class="fas fa-layer-group"></i> Section</label>
+            <select id="sectionSelect" onchange="updateStudentList()">
+            <option value="A">Section A</option>
+            <option value="B">Section B</option>
+            <option value="C">Section C</option>
+        </select>
+    </div>
+</div>
+
+    <div class="action-grid">
+    <div class="card" onclick="openHomeworkModal()">
+        <i class="fas fa-edit" style="color: #00b09b;"></i>
+        <h4>Homework</h4>
+    </div>
+    <div class="card" onclick="openNoticeModal()">
+        <i class="fas fa-bullhorn" style="color: #00b09b;"></i>
+        <h4>Notice</h4>
+    </div>
+    <div class="card" onclick="openExamModal()">
+        <i class="fas fa-file-invoice" style="color: #00b09b;"></i>
+        <h4>Exams</h4>
+    </div>
+    <div class="card" onclick="openEventModal()">
+        <i class="fas fa-calendar-alt" style="color: #00b09b;"></i>
+        <h4>Events</h4>
+    </div>
+</div>
+
+    <div class="list-section">
+        <h3 style="font-size: 16px; margin-bottom: 15px; color: #333;">
+            <i class="fas fa-user-check" style="color: #00b09b;"></i> Mark Attendance
+        </h3>
+
+        <div class="student-item" data-roll="101">
+            <div class="s-name">
+                <h5>Riya Kumari</h5>
+                <span>Roll No: 101</span>
+            </div>
+            <div class="att-btns">
+                <button class="btn-p" onclick="markAttendance(this, 'P')">P</button>
+                <button class="btn-a" onclick="markAttendance(this, 'A')">A</button>
+            </div>
+        </div>
+
+        <div class="student-item" data-roll="102">
+            <div class="s-name">
+                <h5>Amit Sharma</h5>
+                <span>Roll No: 102</span>
+            </div>
+            <div class="att-btns">
+                <button class="btn-p" onclick="markAttendance(this, 'P')">P</button>
+                <button class="btn-a" onclick="markAttendance(this, 'A')">A</button>
+            </div>
+        </div>
+
+        <div class="student-item" data-roll="103">
+            <div class="s-name">
+                <h5>Sneha Singh</h5>
+                <span>Roll No: 103</span>
+            </div>
+            <div class="att-btns">
+                <button class="btn-p" onclick="markAttendance(this, 'P')">P</button>
+                <button class="btn-a" onclick="markAttendance(this, 'A')">A</button>
+            </div>
+        </div>
+    </div>
+    <div id="hwModal" class="modal event-style">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('hwModal')">&times;</span>
+            <h3><i class="fas fa-book"></i> Post Homework</h3>
+            <p id="hwTargetText" style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
+            
+            <textarea id="homeworkInput" placeholder="Enter homework details for students..."></textarea>
+            
+            <button class="btn-login" onclick="saveHomework()" style="width: 100%; padding: 12px; margin-top: 15px; border-radius: 12px; background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%); color: white; border: none; font-weight: bold; cursor: pointer;">
+                Send to Students
+            </button>
+        </div>
+    </div>
+
+    <div class="card" onclick="openNoticeModal()">
+    <i class="fas fa-bullhorn" style="color: #00b09b;"></i>
+    <h4>Notice</h4>
+</div>
+
+<div id="noticeModal" class="modal event-style">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('noticeModal')">&times;</span>
+        <h3><i class="fas fa-bullhorn"></i> Send Notice</h3>
+        <p id="noticeTargetText" style="font-size: 12px; color: #666; margin-bottom: 10px;"></p>
+        
+        <textarea id="noticeInput" placeholder="Enter notice/announcement for students..."></textarea>
+        
+        <button class="btn-login" onclick="saveNotice()" style="width: 100%; padding: 12px; margin-top: 15px; border-radius: 12px; background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%); color: white; border: none; font-weight: bold; cursor: pointer;">
+            Post Notice
+        </button>
+    </div>
+</div>
+
+<div id="examModal" class="modal event-style">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('examModal')">&times;</span>
+        <h3><i class="fas fa-file-invoice"></i> Exam Schedule</h3>
+        <p id="examTargetText" class="target-badge"></p> <textarea id="examInput" placeholder="Enter Exam details..."></textarea>
+        <button class="btn-login" onclick="saveData('exam')">Post Exam Info</button>
+    </div>
+</div>
+
+<div id="eventModal" class="modal event-style">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal('eventModal')">&times;</span>
+        <h3><i class="fas fa-calendar-alt"></i> School Events</h3>
+        <p id="eventTargetText" class="target-badge"></p> <textarea id="eventInput" placeholder="Enter Event details..."></textarea>
+        <button class="btn-login" onclick="saveData('event')">Post Event</button>
+    </div>
+</div>
+
+
+    <div class="teacher-nav">
+        <a href="#" class="nav-item active">
+            <i class="fas fa-th-large"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Students</span>
+        </a>
+        <a href="#" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+        </a>
+        <a href="teacher_login.html" class="nav-item">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <script src="teacher_dashboard.js"></script>
+    <script>
+        // 1. Initial Setup
+        window.onload = function() {
+            const tName = localStorage.getItem("teacherName") || "Teacher Sir";
+            document.getElementById("tWelcome").innerText = `Welcome, ${tName}! 👨‍🏫`;
+        }
+
+        // 2. Open Modal Logic
+        function openModal(modalId, targetTextId) {
+            const cls = document.getElementById('classSelect').value;
+            const sec = document.getElementById('sectionSelect').value;
+            document.getElementById(targetTextId).innerText = `Targeting: Class ${cls}-${sec}`;
+            document.getElementById(modalId).style.display = "flex";
+        }
+
+        // 3. Close Modal Logic
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
+        }
+
+        // 4. Save Logic (Common for all)
+        function handleSave(type, inputId, modalId) {
+            const text = document.getElementById(inputId).value;
+            if(!text.trim()) return alert("Please enter some details!");
+
+            const cls = document.getElementById('classSelect').value;
+            const sec = document.getElementById('sectionSelect').value;
+            
+            const data = {
+                content: text,
+                date: new Date().toLocaleDateString(),
+                class: cls,
+                section: sec
+            };
+
+            localStorage.setItem(`${type}_${cls}_${sec}`, JSON.stringify(data));
+            alert(type.toUpperCase() + " saved successfully! ✅");
+            
+            document.getElementById(inputId).value = ""; // Clear input
+            closeModal(modalId);
+        }
+
+        // 5. Close on Outside Click
+        window.onclick = function(event) {
+            if (event.target.className === "modal") {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

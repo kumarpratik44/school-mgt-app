@@ -1,0 +1,138 @@
+/* General Layout */
+body {
+    background-color: #f4f7f6;
+    margin: 0;
+    padding-bottom: 80px;
+}
+
+.main-content {
+    padding: 15px;
+}
+
+/* Tab System */
+.tab-container {
+    display: flex;
+    background: #e0e0e0;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    padding: 5px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    font-weight: bold;
+    color: #666;
+    transition: 0.3s;
+}
+
+.tab-btn.active {
+    background: white;
+    color: #764ba2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Exam Cards (Schedule) */
+.exam-card {
+    background: white;
+    display: flex;
+    padding: 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.exam-tag {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: #764ba2;
+    color: white;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 5px;
+    text-transform: uppercase;
+}
+
+.exam-date {
+    background: #f0ecf7;
+    color: #764ba2;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    min-width: 55px;
+}
+
+.exam-date span { font-size: 22px; font-weight: bold; }
+
+.exam-details { margin-left: 15px; }
+.exam-details h4 { margin: 0; font-size: 16px; color: #333; }
+.exam-details p { margin: 5px 0 0; font-size: 13px; color: #777; }
+
+/* Result Tables & Container */
+.result-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    margin-top: 15px;
+}
+
+.result-table, .final-table {
+    width: 100%;
+    min-width: 550px; /* Scroll lane ke liye */
+    border-collapse: collapse;
+}
+
+.result-table th, .final-table th {
+    background: #f8f9fa;
+    color: #764ba2;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #eee;
+}
+
+.result-table td, .final-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 14px;
+}
+
+/* Final Marksheet Section */
+.marksheet-header {
+    text-align: center;
+    margin: 30px 0 15px;
+    padding-top: 20px;
+    border-top: 2px dashed #ccc;
+}
+
+.final-summary-box {
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 15px;
+    border: 1px solid #764ba2;
+}
+
+.summary-item { text-align: center; }
+.summary-item span { font-size: 11px; color: #666; display: block; }
+.summary-item strong { font-size: 16px; color: #764ba2; }
+
+.download-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+}

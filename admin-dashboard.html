@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Professional Admin Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --success: #4cc9f0;
+        --danger: #f72585;
+        --bg: #f8f9fd;
+        --white: #ffffff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        background: var(--bg);
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Sidebar Styling */
+      .sidebar {
+        width: 260px;
+        background: var(--white);
+        border-right: 1px solid #e0e0e0;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        position: fixed;
+        height: 100vh;
+      }
+      .sidebar-brand {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 30px;
+        text-align: center;
+      }
+      .nav-links {
+        list-style: none;
+        flex-grow: 1;
+      }
+      .nav-item {
+        padding: 12px 15px;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #555;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+      }
+
+      /* Main Content */
+      .main-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+        padding: 30px;
+      }
+
+      /* Welcome Banner with Cartoon */
+      .welcome-banner {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 20px;
+        padding: 30px;
+        color: white;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+      }
+      .welcome-text h1 {
+        font-size: 28px;
+      }
+      .welcome-img {
+        width: 150px;
+        filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.2));
+      }
+
+      /* Stats Grid */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+      .stat-card {
+        background: var(--white);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        transition: 0.3s;
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+      .stat-card i {
+        font-size: 30px;
+        margin-bottom: 10px;
+        color: var(--primary);
+      }
+      .stat-card span {
+        font-size: 14px;
+        color: #777;
+      }
+      .stat-card h2 {
+        font-size: 24px;
+        color: #333;
+      }
+
+      /* Bottom Section: Notes & Calendar */
+      /* Desktop par side-by-side, Mobile par upar-niche */
+      .bottom-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+
+      .card {
+        background: var(--white);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #eee;
+        width: 100%; /* Card ko poori widht dega */
+        box-sizing: border-box;
+      }
+
+      /* Mobile ke liye khas fixing */
+      @media (max-width: 600px) {
+        .bottom-grid {
+          grid-template-columns: 1fr; /* Sirf 1 column */
+        }
+
+        .todo-input-group {
+          flex-direction: column; /* Input aur Date upar-niche */
+        }
+
+        .todo-input-group input,
+        .todo-input-group button {
+          width: 100%; /* Mobile par poora bada dikhega */
+        }
+      }
+
+      .notes-area textarea {
+        width: 100%;
+        height: 150px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        margin-top: 10px;
+        resize: none;
+        /* Blinking Alert Animation */
+        @keyframes blink {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.3;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+        .blink-alert {
+          animation: blink 1s infinite;
+          background: #fff5f5 !important;
+          border: 1px solid #ff4d4d !important;
+          color: #d63031 !important;
+        }
+        .todo-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 12px;
+          border-bottom: 1px solid #eee;
+          word-break: break-word; /* Bada text niche shift ho jayega */
+        }
+        .btn-primary-small {
+          width: 100%;
+          padding: 10px;
+          background: var(--primary);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-top: 10px;
+        }
+        .btn-blue-small {
+          padding: 8px 15px;
+          background: var(--primary);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 900px) {
+        .sidebar {
+          width: 70px;
+          padding: 10px;
+        }
+        .sidebar-brand,
+        .nav-item span {
+          display: none;
+        }
+        .main-content {
+          margin-left: 70px;
+          width: calc(100% - 70px);
+        }
+        .welcome-img {
+          width: 80px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="sidebar-brand"><i class="fas fa-university"></i> EDU-HUB</div>
+      <nav class="nav-links">
+        <a href="admin-dashboard.html" class="nav-item active"
+          ><i class="fas fa-home"></i> <span>Dashboard</span></a
+        >
+        <a href="admin-staff.html" class="nav-item"
+          ><i class="fas fa-user-tie"></i> <span>Staff Mgt</span></a
+        >
+        <a href="staff-attendance.html" class="nav-item"
+          ><i class="fas fa-calendar-check"></i>
+          <span>Staff Attendance</span></a
+        >
+        <a href="staff-salary.html" class="nav-item"
+          ><i class="fas fa-wallet"></i> <span>Payroll Hub</span></a
+        >
+        <a href="admin-students.html" class="nav-item"
+          ><i class="fas fa-user-graduate"></i> <span>Student Mgt</span></a
+        >
+        <a href="student_fee_mgt.html" class="nav-item"
+          ><i class="fas fa-money-bill-wave"></i> <span>Fee Collection</span></a
+        >
+        <a href="admin-results.html" class="nav-item"
+          ><i class="fas fa-chart-line"></i> <span>Exam Results</span></a
+        >
+      </nav>
+      <a href="index.html" class="nav-item" style="color: var(--danger)"
+        ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
+      >
+    </aside>
+
+    <main class="main-content">
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h1>Hello, Super Admin!</h1>
+          <p>Welcome back! School ka sabhi data update ho chuka hai.</p>
+        </div>
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3449/3449642.png"
+          alt="Admin Cartoon"
+          class="welcome-img"
+        />
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-users-cog"></i>
+          <span>Total Staff</span>
+          <h2 id="staffCount">0</h2>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-user-graduate"></i>
+          <span>Total Students</span>
+          <h2 id="studentCount">0</h2>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-hand-holding-usd" style="color: #10b981"></i>
+          <span>Monthly Fees [cite: 5]</span>
+          <h2 id="totalFees">₹0</h2>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-file-invoice-dollar" style="color: #f59e0b"></i>
+          <span>Salary Paid [cite: 19, 30]</span>
+          <h2 id="totalSalary">₹0</h2>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-exclamation-circle" style="color: var(--danger)"></i>
+          <span>Total Dues </span>
+          <h2 id="totalDues">₹0</h2>
+        </div>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card notes-area">
+          <h3><i class="fas fa-bullhorn"></i> Circular Notes</h3>
+          <textarea
+            id="adminNote"
+            placeholder="Aaj ka notice yahan likhein..."
+          ></textarea>
+          <button
+            onclick="saveNote()"
+            style="
+              width: 100%;
+              padding: 10px;
+              background: var(--primary);
+              color: white;
+              border: none;
+              border-radius: 8px;
+              cursor: pointer;
+              margin-top: 10px;
+            "
+          >
+            Circulate Now
+          </button>
+        </div>
+        <div class="card">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <h3><i class="fas fa-tasks"></i> Smart To-Do List</h3>
+            <span
+              id="alertMsg"
+              style="color: red; font-size: 12px; font-weight: bold"
+            ></span>
+          </div>
+
+          <div
+            class="todo-input-group"
+            style="display: flex; gap: 10px; margin-top: 10px"
+          >
+            <input
+              type="text"
+              id="todoTask"
+              placeholder="Kya kaam hai?"
+              style="flex: 2; padding: 8px"
+            />
+            <input type="date" id="todoDate" style="flex: 1; padding: 8px" />
+            <button onclick="addTask()" class="btn-blue-small">Add</button>
+          </div>
+
+          <div
+            id="todoList"
+            style="margin-top: 15px; max-height: 200px; overflow-y: auto"
+          ></div>
+        </div>
+      </div>
+    </main>
+   <script>
+    // Sabse pehle functions ko page load par call karein
+    window.onload = function () {
+            loadDashboardData();
+            renderTasks();
+        };
+
+        function logoutAdmin() {
+            localStorage.removeItem("adminActive");
+            window.location.href = "admin-login.html";
+        }
+    function loadDashboardData() {
+        // 1. Staff & Student Counting
+        const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+        const students = JSON.parse(localStorage.getItem("schoolStudents")) || [];
+        document.getElementById("staffCount").innerText = staff.length;
+        document.getElementById("studentCount").innerText = students.length;
+
+        // 2. Salary Calculation
+        const payroll = JSON.parse(localStorage.getItem("payroll_january_2026")) || [];
+        let paidAmount = payroll.filter(p => p.status === "PAID").reduce((sum, p) => sum + p.netPayable, 0);
+        let pendingAmount = payroll.filter(p => p.status === "PENDING").reduce((sum, p) => sum + p.netPayable, 0);
+
+        document.getElementById("totalSalary").innerText = "₹" + paidAmount.toLocaleString();
+        document.getElementById("totalDues").innerText = "₹" + pendingAmount.toLocaleString();
+
+        // 3. Sync Notice Box
+        const savedNotice = localStorage.getItem("adminNotice") || "";
+        const noteBox = document.getElementById("adminNote");
+        if(noteBox) noteBox.value = savedNotice;
+    }
+
+   // --- Notice Sending Logic ---
+function saveNote() {
+    const noteBox = document.getElementById("adminNote");
+    
+    // Agar box nahi mila toh code yahan rukk jaye
+    if(!noteBox) return;
+
+    const note = noteBox.value;
+
+    // Khali message check karein
+    if (note.trim() === "") {
+        alert("Kripya notice likhein!");
+        return;
+    }
+
+    // 1. Data Save karein (Student Portal ke liye)
+    localStorage.setItem("adminNotice", note);
+    
+    // 2. Time Save karein (Bade hi professional tarike se)
+    const timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    localStorage.setItem("adminNoticeTime", timeString);
+
+    // 3. Admin ko confirm karein
+    alert("📢 Circular updated for all users!");
+
+    // 4. SABSE JARURI: Box ko khali kar dein
+    noteBox.value = ""; 
+}
+
+    // --- Smart To-Do List Logic (Jo gayab tha) ---
+    function addTask() {
+        const task = document.getElementById("todoTask").value;
+        const date = document.getElementById("todoDate").value;
+
+        if (!task || !date) {
+            alert("Task aur Date dono bhariye!");
+            return;
+        }
+
+        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+        tasks.push({ id: Date.now(), task: task, date: date });
+        localStorage.setItem("adminTasks", JSON.stringify(tasks));
+
+        document.getElementById("todoTask").value = "";
+        renderTasks();
+    }
+
+    function renderTasks() {
+        const list = document.getElementById("todoList");
+        const alertMsg = document.getElementById("alertMsg");
+        if(!list) return;
+
+        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+        let html = "";
+        let hasAlert = false;
+
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        tasks.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((t) => {
+            const taskDate = new Date(t.date);
+            const isUrgent = taskDate <= tomorrow;
+            if (isUrgent) hasAlert = true;
+
+            html += `
+                <div class="todo-item ${isUrgent ? 'blink-alert' : ''}" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
+                    <div>
+                        <strong>${t.task}</strong> <br>
+                        <small><i class="far fa-calendar-alt"></i> ${t.date}</small>
+                    </div>
+                    <i class="fas fa-trash-alt" style="color: #f72585; cursor: pointer;" onclick="deleteTask(${t.id})"></i>
+                </div>`;
+        });
+
+        list.innerHTML = html || "<p style='color: #999; text-align: center;'>No tasks.</p>";
+        if(alertMsg) alertMsg.innerText = hasAlert ? "⚠️ URGENT!" : "";
+    }
+
+    function deleteTask(id) {
+        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+        tasks = tasks.filter((t) => t.id !== id);
+        localStorage.setItem("adminTasks", JSON.stringify(tasks));
+        renderTasks();
+    }
+</script>
+  </body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Salary Management System</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+select, input {
+    padding: 6px;
+    width: 100%;
+}
+
+button {
+    padding: 8px 14px;
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #219150;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+}
+
+th {
+    background: #2c3e50;
+    color: white;
+}
+
+.summary {
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.print-btn {
+    background: #2980b9;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏫 School Salary Management Dashboard</h1>
+
+<div class="top-bar">
+    <div>
+        <label><b>Select Month:</b></label>
+        <select id="salaryMonth">
+            <option>January</option><option>February</option><option>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+        </select>
+    </div>
+    <button onclick="addRow()">➕ Add Employee</button>
+</div>
+
+<table id="salaryTable">
+<thead>
+<tr>
+    <th>Name</th>
+    <th>Category</th>
+    <th>Basic Salary</th>
+    <th>Present Days</th>
+    <th>Payable Salary</th>
+    <th>PF (12%)</th>
+    <th>Bonus</th>
+    <th>Advance</th>
+    <th>Net Salary</th>
+    <th>Slip</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+    <td><input placeholder="Employee Name"></td>
+    <td>
+        <select>
+            <option>Teaching</option>
+            <option>Non-Teaching</option>
+            <option>Administration</option>
+        </select>
+    </td>
+    <td><input type="number" oninput="calculate(this)"></td>
+    <td><input type="number" max="26" oninput="calculate(this)"></td>
+    <td class="payable">0</td>
+    <td class="pf">0</td>
+    <td><input type="number" oninput="calculate(this)"></td>
+    <td><input type="number" oninput="calculate(this)"></td>
+    <td class="net">0</td>
+    <td><button class="print-btn" onclick="printSlip(this)">Print</button></td>
+</tr>
+</tbody>
+</table>
+
+<div class="summary">
+    Total Monthly Salary Expenditure: ₹ <span id="totalExpense">0</span>
+</div>
+
+<script>
+const WORKING_DAYS = 26;
+
+function calculate(el) {
+    let row = el.closest("tr");
+
+    let basic = +row.cells[2].querySelector("input").value || 0;
+    let present = +row.cells[3].querySelector("input").value || 0;
+    let bonus = +row.cells[6].querySelector("input").value || 0;
+    let advance = +row.cells[7].querySelector("input").value || 0;
+
+    let payable = (basic / WORKING_DAYS) * present;
+    let pf = payable * 0.12;
+    let net = payable - pf + bonus - advance;
+
+    row.querySelector(".payable").innerText = payable.toFixed(2);
+    row.querySelector(".pf").innerText = pf.toFixed(2);
+    row.querySelector(".net").innerText = net.toFixed(2);
+
+    calculateTotal();
+}
+
+function calculateTotal() {
+    let total = 0;
+    document.querySelectorAll(".net").forEach(n => {
+        total += +n.innerText || 0;
+    });
+    document.getElementById("totalExpense").innerText = total.toFixed(2);
+}
+
+function addRow() {
+    let tbody = document.querySelector("#salaryTable tbody");
+    let row = tbody.rows[0].cloneNode(true);
+
+    row.querySelectorAll("input").forEach(i => i.value = "");
+    row.querySelectorAll(".payable,.pf,.net").forEach(c => c.innerText = "0");
+
+    tbody.appendChild(row);
+}
+
+function printSlip(btn) {
+    let row = btn.closest("tr");
+    let month = document.getElementById("salaryMonth").value;
+
+    let slip = `
+    <h2>Salary Slip - ${month}</h2>
+    <p><b>Name:</b> ${row.cells[0].querySelector("input").value}</p>
+    <p><b>Category:</b> ${row.cells[1].querySelector("select").value}</p>
+    <p><b>Basic Salary:</b> ₹${row.cells[2].querySelector("input").value}</p>
+    <p><b>Present Days:</b> ${row.cells[3].querySelector("input").value}</p>
+    <p><b>Payable Salary:</b> ₹${row.cells[4].innerText}</p>
+    <p><b>PF:</b> ₹${row.cells[5].innerText}</p>
+    <p><b>Bonus:</b> ₹${row.cells[6].querySelector("input").value}</p>
+    <p><b>Advance:</b> ₹${row.cells[7].querySelector("input").value}</p>
+    <h3>Net Salary: ₹${row.cells[8].innerText}</h3>
+    `;
+
+    let w = window.open("", "", "width=600,height=600");
+    w.document.write(slip);
+    w.print();
+}
+</script>
+
+</body>
+</html>

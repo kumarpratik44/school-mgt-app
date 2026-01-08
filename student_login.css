@@ -1,0 +1,109 @@
+/* style.css */
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: center;
+    overflow: hidden; /* Bahar nikalne wale elements ko rokega */
+}
+
+.header {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    padding: 35px 20px;
+    color: white;
+}
+
+.logo-circle {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+.login-box-content {
+    padding: 30px;
+}
+
+.avatar-img {
+    width: 85px;
+    height: 85px;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid #f0f2f5;
+    object-fit: cover;
+}
+
+.login-box-content h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.input-field {
+    margin-bottom: 15px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 14px 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    outline: none;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+.input-field input:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 8px rgba(118, 75, 162, 0.15);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    border: none;
+    color: white;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: transform 0.2s;
+}
+
+.btn-login:active {
+    transform: scale(0.97);
+}
+
+.error {
+    color: #ff4d4d;
+    font-size: 13px;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #764ba2;
+    font-size: 14px;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 20px;
+}

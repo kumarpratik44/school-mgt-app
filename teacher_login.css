@@ -1,0 +1,125 @@
+/* --- Global Styles --- */
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f0f7f6; /* Soft Teal background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* --- Card Structure --- */
+.login-card {
+    background: white;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+    overflow: visible; /* Isse photo bahar overlap kar payegi */
+}
+
+/* --- Teal Header --- */
+.header {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
+    color: white;
+    padding: 40px 20px 60px; /* Neeche extra space photo ke liye */
+    border-radius: 25px 25px 0 0;
+}
+
+.logo-circle {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
+
+/* --- Photo Fix (Most Important) --- */
+.avatar-img {
+    width: 85px !important; 
+    height:85px !important;
+    border-radius: 50%; /* Image gol hogi */
+    border: 5px solid white; /* White border dashboard jaisa */
+    background: white;
+    
+    /* Photo ko header ke upar khiskaye */
+    display: block;
+    margin: -50px auto 10px; 
+    position: relative;
+    z-index: 10;
+    
+    object-fit: cover; /* Photo stretch nahi hogi */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* --- Form Content --- */
+.login-box-content {
+    padding: 20px 30px 30px;
+}
+
+.login-box-content h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* --- Inputs --- */
+.input-field {
+    margin-bottom: 15px;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    outline: none;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+.input-field input:focus {
+    border-color: #00b09b;
+    box-shadow: 0 0 5px rgba(0, 176, 155, 0.2);
+}
+
+/* --- Button --- */
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+/* --- Error & Footer --- */
+.error {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.footer {
+    margin-top: 20px;
+}
+
+.footer a {
+    text-decoration: none;
+    color: #00b09b !important;
+    font-size: 13px;
+    font-weight: 500;
+}

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Management | School Portal</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+    :root { --primary: #3b82f6; --bg: #f8fafc; --dark: #1e293b; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); padding: 10px; margin: 0; }
+    
+    .card { 
+        background: white; 
+        padding: 20px; 
+        border-radius: 15px; 
+        max-width: 900px; 
+        margin: 10px auto; 
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+    }
+
+    /* Form Grid Fix */
+    .form-grid { 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: 12px; 
+        margin-top: 20px; 
+    }
+
+    /* Har input field ko desktop par aadha aur mobile par full width dene ke liye */
+    .form-grid input, .form-grid select { 
+        flex: 1 1 calc(50% - 12px); 
+        padding: 12px; 
+        border: 1px solid #e2e8f0; 
+        border-radius: 8px; 
+        min-width: 200px; /* Choti screen par wrap hone mein madad karega */
+        box-sizing: border-box;
+    }
+
+    /* Address field hamesha badi honi chahiye */
+    #staffAddress { flex: 1 1 100%; }
+
+    /* Button styling */
+    .btn-save { 
+        background: var(--primary); 
+        color: white; 
+        border: none; 
+        padding: 15px; 
+        border-radius: 10px; 
+        cursor: pointer; 
+        font-weight: bold; 
+        width: 100%; 
+        margin-top: 20px; 
+    }
+
+    /* TABLE MOBILE FIX - Sabse zaroori */
+    .table-container {
+        width: 100%;
+        overflow-x: auto; /* Side scroll enable karega */
+        margin-top: 30px;
+        border: 1px solid #eee;
+        border-radius: 10px;
+    }
+
+    .staff-table { 
+        width: 100%; 
+        min-width: 700px; /* Table ko sikurne se rokega */
+        border-collapse: collapse; 
+    }
+    
+    .staff-table th, .staff-table td { 
+        padding: 12px; 
+        border-bottom: 1px solid #eee; 
+        text-align: left; 
+        font-size: 14px;
+    }
+
+    .staff-table th { background: #f1f5f9; color: #64748b; }
+
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 600px) {
+        .form-grid input, .form-grid select { 
+            flex: 1 1 100%; /* Mobile par sab ek ke niche ek */
+        }
+        .card { padding: 15px; }
+        h2 { font-size: 18px; }
+    }
+
+    /* Category Badges */
+    .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+    .teaching { background: #dcfce7; color: #166534; }
+    .non-teaching { background: #fef9c3; color: #854d0e; }
+    .admin { background: #dbeafe; color: #1e40af; }
+</style>
+    
+  </head>
+  <body>
+    <div class="card">
+      <h2><i class="fas fa-users-cog"></i> Staff Registration</h2>
+
+      <div class="form-grid">
+        <input type="text" id="staffName" placeholder="Full Name" />
+        <select id="staffCategory">
+          <option value="">Select Category</option>
+          <option value="Teaching">Teaching Staff (Teacher)</option>
+          <option value="Non-Teaching">Non-Teaching Staff (Peon/Driver)</option>
+          <option value="Admin">Admin Staff (Principal/Director)</option>
+        </select>
+        <input
+          type="text"
+          id="staffDesignation"
+          placeholder="Designation (e.g. Science Teacher, MD)"
+        />
+        <input
+          type="number"
+          id="staffSalary"
+          placeholder="Basic Salary (Monthly)"
+        />
+        <input type="date" id="joiningDate" />
+        <input
+          type="text" id="staffPhone" 
+       placeholder="Phone Number (10 Digits)" 
+       maxlength="10" 
+       oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
+       required>
+        
+
+        <input type="email" id="staffEmail" placeholder="Email ID (Optional)" />
+        <input
+          type="text"
+          id="staffAddress"
+          placeholder="Full Address (Required)"
+          style="grid-column: span 2"
+          required
+        />
+      </div>
+
+      <button class="btn-save" onclick="saveStaff()">
+        <i class="fas fa-plus-circle"></i> Add Staff Member
+      </button>
+
+      <div style="margin-top: 40px">
+        <h3>Staff Directory</h3>
+        <div class="table-container">
+        <table class="staff-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Contact & Email</th>
+              <th>Address</th>
+              <th>Salary</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="staffListBody"></tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      
+    // 1. Data load karte waqt error handling
+    let staffData = [];
+    try {
+        staffData = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    } catch (e) {
+        console.error("Data load error:", e);
+        staffData = [];
+    }
+
+    // 2. Save Staff Function
+    function saveStaff() {
+        const name = document.getElementById("staffName").value.trim();
+        const category = document.getElementById("staffCategory").value;
+        const salary = document.getElementById("staffSalary").value;
+        const address = document.getElementById("staffAddress").value.trim();
+        const phone = document.getElementById("staffPhone").value.trim();
+        const designation = document.getElementById("staffDesignation").value.trim();
+        const date = document.getElementById("joiningDate").value;
+        const email = document.getElementById("staffEmail").value.trim();
+
+        // --- VALIDATIONS ---
+        
+        // Phone Validation (Exactly 10 digits & only numbers)
+        if (phone.length !== 10 || !/^\d+$/.test(phone)) {
+            alert("Galti: Mobile number poore 10 digits ka hona chahiye!");
+            return;
+        }
+
+        // Required Fields Validation
+        if (!name || !category || !salary || !address) {
+            alert("Please fill all required fields (Name, Category, Salary, Address)!");
+            return;
+        }
+
+        // --- DATA OBJECT ---
+        const newStaff = {
+            id: "ST" + Date.now().toString().slice(-4),
+            name: name,
+            category: category,
+            designation: designation,
+            salary: salary,
+            date: date,
+            phone: phone,
+            email: email,
+            address: address,
+        };
+
+        // --- SAVE LOGIC (Ab function ke andar hai) ---
+        try {
+            staffData.push(newStaff);
+            localStorage.setItem("schoolStaff", JSON.stringify(staffData));
+            alert("Staff Member '" + name + "' successfully added!");
+
+            loadStaffTable(); // Table refresh
+            clearFields();    // Form reset
+        } catch (err) {
+            alert("Data not stored: " + err);
+        }
+    } // saveStaff function yahan khatam hota hai
+
+    // 3. Table Load Function
+    function loadStaffTable() {
+        const tbody = document.getElementById("staffListBody");
+        if (!tbody) return;
+
+        tbody.innerHTML = "";
+
+        staffData.forEach((s, index) => {
+            // Category ke hisab se CSS class set karna
+            const catClass = s.category ? s.category.toLowerCase().replace(" ", "-") : "default";
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td>${s.id}</td>
+                    <td><b>${s.name}</b><br><small>${s.designation || ""}</small></td>
+                    <td><span class="badge ${catClass}">${s.category}</span></td>
+                    <td>
+                        <i class="fas fa-phone"></i> ${s.phone}<br>
+                        <i class="fas fa-envelope"></i> ${s.email || "N/A"}
+                    </td>
+                    <td style="font-size: 12px; max-width: 150px;">${s.address}</td>
+                    <td>₹${s.salary}</td>
+                    <td>
+                        <button onclick="deleteStaff(${index})" style="color:red; border:none; background:none; cursor:pointer;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // 4. Delete Function
+    function deleteStaff(index) {
+        if (confirm("Kya aap ise delete karna chahte hain?")) {
+            staffData.splice(index, 1);
+            localStorage.setItem("schoolStaff", JSON.stringify(staffData));
+            loadStaffTable();
+        }
+    }
+
+    // 5. Clear Fields Function
+    function clearFields() {
+        const fields = ["staffName", "staffCategory", "staffDesignation", "staffSalary", "joiningDate", "staffPhone", "staffEmail", "staffAddress"];
+        fields.forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.value = "";
+        });
+    }
+
+    // Page load hote hi table dikhayein
+    window.onload = loadStaffTable;
+</script>
+  </body>
+</html>
