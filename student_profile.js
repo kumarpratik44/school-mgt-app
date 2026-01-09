@@ -1,116 +1,145 @@
-// --- 1. SECURITY CHECK (Sabse Pehle) ---
+// --- 1. SECURITY CHECK ---
 if (localStorage.getItem("studentActive") !== "true") {
-    window.location.href = "student-login.html";
+    window.location.href = "student_login.html";
 }
-// 1. Page Load hote hi data fetch karein
+
+// --- 2. GLOBAL PAGE LOAD ---
 window.onload = function() {
-    renderStudentData();
-    renderAdminNotice();
-    updateFeeStatus();
+    renderAllData();
+    if(document.querySelector('.notice-card')) renderAdminNotice();
+    if(document.getElementById('attendancePercent')) updateAttendanceUI();
+    if(document.querySelector('.stat-card')) updateFeeStatus();
 };
 
-// 2. Student ki basic info load karein
-function renderStudentData() {
-    const student = JSON.parse(localStorage.getItem('currentStudent')) || {
-        name: "Riya Kumari",
-        class: "10th",
-        section: "B",
-        fatherName: "Mr. Sharma",
-        id: "STU101"
-    };
+// --- 3. MASTER RENDER FUNCTION ---
+function renderAllData() {
+    // LocalStorage se data uthao
+    const student = JSON.parse(localStorage.getItem('currentStudent'));
 
-    const nameEl = document.getElementById('dispName');
-    const classEl = document.getElementById('dispClass');
-    
-    if(nameEl) nameEl.innerText = `Namaste, ${student.name}! 👋`;
-    if(classEl) classEl.innerText = `Class: ${student.class}-${student.section} | F. Name: ${student.fatherName}`;
-    
-    const imgElement = document.getElementById('userPhoto');
-    const savedPhoto = localStorage.getItem(`photo_${student.id}`);
-    if(imgElement && savedPhoto) {
-        imgElement.src = savedPhoto;
-    }
-}
-
-// 3. Photo Preview
-function previewImage(event) {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    const student = JSON.parse(localStorage.getItem('currentStudent')) || {id: "STU101"};
-
-    reader.onload = function() {
-        const imgElement = document.getElementById('userPhoto');
-        if(imgElement) imgElement.src = reader.result;
-        localStorage.setItem(`photo_${student.id}`, reader.result);
-    };
-    if(file) reader.readAsDataURL(file);
-}
-
-// 4. Admin Notice
-function renderAdminNotice() {
-    const noticeElement = document.querySelector('.notice-card p');
-    const timeElement = document.querySelector('.notice-card span');
-    const latestNotice = localStorage.getItem('adminNotice');
-    
-    if(latestNotice && noticeElement) {
-        noticeElement.innerHTML = `📢 ${latestNotice}`;
-        if(timeElement) timeElement.innerText = "Updated recently";
-    }
-}
-
-// 5. Safe Fee Status (Sabse Jaruri Fix)
-function updateFeeStatus() {
-    const student = JSON.parse(localStorage.getItem('currentStudent')) || {name: "Riya Kumari"};
-    const allFeeRecords = JSON.parse(localStorage.getItem('studentFees')) || [];
-    
-    const paidAmount = allFeeRecords
-        .filter(f => f.name === student.name)
-        .reduce((sum, f) => sum + parseInt(f.amount), 0);
-
-    const totalYearlyFee = 20000; 
-    const pendingFee = totalYearlyFee - paidAmount;
-
-    // Yahan fix hai: Pehle check karo ki card hai ya nahi
-    const feeCards = document.querySelectorAll('.stat-card h3');
-    if(feeCards.length >= 2) {
-        feeCards[1].innerText = `₹${pendingFee > 0 ? pendingFee : 0}`;
-    }
-}
-function updateAttendanceUI() {
-    const myRoll = localStorage.getItem("rollNo"); // Login bache ka roll no
-    const history = JSON.parse(localStorage.getItem('attendanceData')) || {};
-    
-    let totalWorkingDays = Object.keys(history).length; // Jitne din attendance li gayi
-    let daysPresent = 0;
-
-    if (totalWorkingDays === 0) {
-        document.getElementById('attendancePercent').innerText = "0%";
+    // AGAR DATA NAHI HAI TOH LOGIN PAR BHEJO (Safety First)
+    if (!student) {
+        // Sirf un pages par login par bheje jo dashboard ke andar hain
+        if(!window.location.href.includes('login')) {
+            window.location.href = 'student-login.html';
+        }
         return;
     }
 
-    // Har din check karo ki bacha present tha ya nahi
-    for (let date in history) {
-        if (history[date][myRoll] === 'P') {
-            daysPresent++;
-        }
-    }
+    // --- Dashboard Elements ---
+    const dispName = document.getElementById('dispName');
+    const dispClass = document.getElementById('dispClass');
+    
+    // --- Profile Page Elements ---
+    const profName = document.getElementById('profName');
+    const profId = document.getElementById('profId');
+    const profFather = document.getElementById('profFather');
+    const profBlood = document.getElementById('profBlood');
+    const headerBlood = document.getElementById('headerBlood');
 
-    // Percentage nikalein
-    let percentage = Math.round((daysPresent / totalWorkingDays) * 100);
+    // UI Updates with Dynamic Data
+    if(dispName) dispName.innerText = `Namaste, ${student.name}! 👋`;
+    
+    // Class aur Section ko profile ke hisaab se dikhana
+    const classDisplay = `Class: ${student.class}-${student.section}`;
+    if(dispClass) dispClass.innerText = `${classDisplay} | F. Name: ${student.fatherName}`;
+    
+    if(profName) profName.innerText = student.name;
+    
+    // ID ya RollNo jo bhi aapne save kiya ho
+    const rollNo = student.rollNo || student.id || "101";
+    if(profId) profId.innerText = `Roll No: ${rollNo} | ${classDisplay}`;
+    
+    if(profFather) profFather.innerText = student.fatherName;
+    if(profBlood) profBlood.innerText = `${student.bloodGroup || "B+"} Positive`;
+    if(headerBlood) headerBlood.innerHTML = `<i class="fas fa-tint"></i> Blood Group: ${student.bloodGroup || "B+"}`;
 
-    // UI update karein (Aapke dashboard ke attendance card ki ID)
-    const percentDisplay = document.getElementById('attendancePercent');
-    if (percentDisplay) {
-        percentDisplay.innerText = percentage + "%";
-        
-        // Agar attendance 75% se kam hai toh color badal dein (Optional)
-        if (percentage < 75) {
-            percentDisplay.style.color = "#ff7675"; // Red for alert
+    // --- Photo Load Logic (Updated) ---
+    const imgElement = document.getElementById('userPhoto');
+    // Pehle dekho kya 'currentStudent' ke andar photo hai?
+    if(imgElement) {
+        if(student.photo) {
+            imgElement.src = student.photo;
         } else {
-            percentDisplay.style.color = "#00b09b"; // Green for safe
+            // Default image agar bache ne photo upload nahi ki
+            imgElement.src = "/image/default-avatar.jpg";
         }
     }
 }
 
-// Page load hote hi ise call karein
-document.addEventListener("DOMContentLoaded", updateAttendanceUI);
+// --- 4. PHOTO PREVIEW & SAVE (Updated for better Sync) ---
+function previewImage(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+
+    if(file.size > 2 * 1024 * 1024) return alert("Photo size should be less than 2MB");
+
+    const reader = new FileReader();
+    reader.onload = function() {
+        const base64Photo = reader.result; // Ye hamari photo ka data hai
+        
+        const imgElement = document.getElementById('userPhoto');
+        if(imgElement) imgElement.src = base64Photo;
+
+        // 1. Current Session update karein
+        let student = JSON.parse(localStorage.getItem('currentStudent'));
+        if(student) {
+            student.photo = base64Photo;
+            localStorage.setItem('currentStudent', JSON.stringify(student));
+        }
+
+        // 2. SABSE ZAROORI: Main Database (allStudents) ko bhi update karein
+        // Iske bina refresh karne par photo chali jayegi
+        let allStudents = JSON.parse(localStorage.getItem('allStudents')) || [];
+        let rollNo = student.rollNo || student.id;
+        
+        let index = allStudents.findIndex(s => s.rollNo === rollNo);
+        if(index !== -1) {
+            allStudents[index].photo = base64Photo; // Main Database mein photo daal di
+            localStorage.setItem('allStudents', JSON.stringify(allStudents));
+            console.log("Photo permanently saved in Database!");
+        }
+    };
+    reader.readAsDataURL(file);
+}
+// --- 5. LOGOUT FUNCTION ---
+function logout() {
+    if(confirm("Kya aap logout karna chahte hain?")) {
+        localStorage.removeItem("studentActive");
+        // currentStudent ko delete nahi karenge taaki login fast ho sake
+        window.location.href = "student_login.html";
+    }
+}
+
+// --- 6. ATTENDANCE & FEES (Dashboard Specific) ---
+function updateAttendanceUI() {
+    const myRoll = localStorage.getItem("rollNo");
+    const history = JSON.parse(localStorage.getItem('attendanceData')) || {};
+    let totalDays = Object.keys(history).length;
+    let presentDays = 0;
+
+    if (totalDays > 0) {
+        for (let date in history) {
+            if (history[date][myRoll] === 'P') presentDays++;
+        }
+        let percent = Math.round((presentDays / totalDays) * 100);
+        const el = document.getElementById('attendancePercent');
+        if(el) {
+            el.innerText = percent + "%";
+            el.style.color = (percent < 75) ? "#ff4d4d" : "#00b09b";
+        }
+    }
+}
+
+function updateFeeStatus() {
+    const student = JSON.parse(localStorage.getItem('currentStudent'));
+    const allFeeRecords = JSON.parse(localStorage.getItem('studentFees')) || [];
+    const paid = allFeeRecords
+                .filter(f => f.name === student.name)
+                .reduce((sum, f) => sum + parseInt(f.amount), 0);
+
+    const pending = 20000 - paid; // Example Base Fee
+    const feeDisplay = document.querySelectorAll('.stat-card h3');
+    if(feeDisplay.length >= 2) {
+        feeDisplay[1].innerText = `₹${pending > 0 ? pending : 0}`;
+    }
+}
