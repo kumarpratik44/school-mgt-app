@@ -68,6 +68,20 @@
           </div>
         </div>
       </div>
+      <div class="bottom-nav">
+        <div class="nav-item" onclick="location.href='student_dashboard.html'">
+    <i class="fas fa-home"></i><span>Home</span>
+</div>
+<div class="nav-item " id="nav-subjects" onclick="location.href='subjects.html'">
+    <i class="fas fa-book"></i><span>Subjects</span>
+</div>
+        <div class="nav-item active" onclick="location.href='final-result.html'">
+            <i class="fas fa-file-alt"></i><span>Exams</span>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="location.href='student_profile.html'">
+             <i class="fas fa-user"></i><span>Profile</span>
+        </div>
+    </div>
 
       <div id="results" class="tab-content" style="display: none">
         <div class="result-summary">
@@ -124,51 +138,50 @@
         <p>FINAL PROGRESS REPORT</p>
       </div>
 
-      <table class="final-table">
-        <thead>
-          <tr>
+      <table class="result-table">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>UT-1</th>
+            <th>UT-2</th>
+            <th>Half-Yearly</th>
+            <th>Annual</th>
+            <th>Final Grade</th>
+        </tr>
+    </thead>
+    <tbody id="resultsTableBody">
+        </tbody>
+</table>
+
+<table class="final-table">
+    <thead>
+        <tr>
             <th>Subject</th>
             <th>UTs (20)</th>
             <th>H.Y. (80)</th>
             <th>Annual (100)</th>
             <th>Total (200)</th>
             <th>Grade</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Mathematics</td>
-            <td>18</td>
-            <td>72</td>
-            <td>92</td>
-            <td><b>182</b></td>
-            <td class="grade-a">A+</td>
-          </tr>
-          <tr>
-            <td>Science</td>
-            <td>15</td>
-            <td>65</td>
-            <td>88</td>
-            <td><b>168</b></td>
-            <td class="grade-a">A</td>
-          </tr>
+        </tr>
+    </thead>
+    <tbody id="finalTableBody">
         </tbody>
-      </table>
+</table>
 
       <div class="final-summary-box">
-        <div class="summary-item">
-          <span>Grand Total</span>
-          <strong>350 / 400</strong>
-        </div>
-        <div class="summary-item">
-          <span>Percentage</span>
-          <strong>87.5%</strong>
-        </div>
-        <div class="summary-item">
-          <span>Result</span>
-          <strong style="color: green">PASSED</strong>
-        </div>
-      </div>
+    <div class="summary-item">
+        <span>Grand Total</span>
+        <strong id="totalObtained">-- / --</strong>
+    </div>
+    <div class="summary-item">
+        <span>Percentage</span>
+        <strong id="finalPercentage">--%</strong>
+    </div>
+    <div class="summary-item">
+        <span>Result</span>
+        <strong id="resultStatus">PENDING</strong>
+    </div>
+</div>
 
       <button class="download-btn">
         <i class="fas fa-file-pdf"></i> Download Marksheet
@@ -176,17 +189,18 @@
     </div>
 
     <div class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='student_dashboard.html'">
-        <i class="fas fa-home"></i><span>Home</span>
-    </div>
-    <div class="nav-item" id="nav-subjects" onclick="window.location.href='subjects.html'">
-        <i class="fas fa-book"></i><span>Subjects</span>
-    </div>
-    <div class="nav-item" onclick="window.location.href='final-result.html'">
-        <i class="fas fa-file-alt"></i><span>Exams</span>
-    </div>
-    <div class="nav-item" id="nav-profile" onclick="window.location.href='student_profile.html'">
-        <i class="fas fa-user"></i><span>Profile</span>
+        <div class="nav-item" onclick="location.href='student_dashboard.html'">
+    <i class="fas fa-home"></i><span>Home</span>
+</div>
+<div class="nav-item " id="nav-subjects" onclick="location.href='subjects.html'">
+    <i class="fas fa-book"></i><span>Subjects</span>
+</div>
+        <div class="nav-item active" onclick="location.href='final-result.html'">
+            <i class="fas fa-file-alt"></i><span>Exams</span>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="location.href='student_profile.html'">
+             <i class="fas fa-user"></i><span>Profile</span>
+        </div>
     </div>
 
     <script src="exams.js"></script>
