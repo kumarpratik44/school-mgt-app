@@ -81,11 +81,14 @@ body {
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     margin-top: 15px;
+    overflow-x: auto; /* Screen se bahar jane par scroll bar dega */
+    margin: 10px 0;
+    border-radius: 10px;
 }
 
 .result-table, .final-table {
     width: 100%;
-    min-width: 550px; /* Scroll lane ke liye */
+    min-width: 500px; /* Scroll lane ke liye */
     border-collapse: collapse;
 }
 
@@ -136,3 +139,27 @@ body {
     font-weight: bold;
     font-size: 16px;
 }
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
+    border-radius: 20px 20px 0 0;
+}
+
+.nav-item {
+    cursor: pointer; /* Sabse zaroori */
+    -webkit-tap-highlight-color: transparent; /* Mobile touch blue box hatane ke liye */
+}
+
+
+.nav-item:active {
+    transform: scale(0.9); /* Click karne par button thoda dabega, jo real feel dega */
+}
+.nav-item i { font-size: 22px; display: block; margin-bottom: 2px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
