@@ -66,3 +66,38 @@
     font-weight: bold;
     cursor: pointer;
 }
+@media (max-width: 360px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr); /* Chhote phones par 3 ki jagah 2 cards karein */
+    }
+}
+.dashboard-avatar-section img {
+    width: 220px; /* Thoda chhota kiya base size */
+    max-width: 90%; /* Screen se bahar kabhi nahi jayega */
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+}
+/* Bottom Nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0;
+    box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
+    border-radius: 20px 20px 0 0;
+}
+
+.nav-item {
+    cursor: pointer; /* Sabse zaroori */
+    -webkit-tap-highlight-color: transparent; /* Mobile touch blue box hatane ke liye */
+}
+
+
+.nav-item:active {
+    transform: scale(0.9); /* Click karne par button thoda dabega, jo real feel dega */
+}
+.nav-item i { font-size: 22px; display: block; margin-bottom: 2px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
