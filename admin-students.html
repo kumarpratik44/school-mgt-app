@@ -351,59 +351,64 @@
     </div>
 </div>
   <script>
-      let students = JSON.parse(localStorage.getItem("students")) || [];
+      // 1. Data load logic (Overwrite se bachne ke liye)
+let students = JSON.parse(localStorage.getItem('students')) || [];
+let allStudents = JSON.parse(localStorage.getItem('allStudents')) || [];
 
-      // 1. Data Save karne ka sahi tarika
+// Page load hote hi table dikhao
+window.onload = renderStudents;
+
+// 2. Student Register Karne ka Function
 function addStudent() {
-    // Inputs se value uthana (IDs dhyan se check karein)
     const name = document.getElementById('sName').value.trim();
     const roll = document.getElementById('sRoll').value.trim();
-    const father = document.getElementById('sFather').value.trim(); // Father's Name fetch
-    const dob = document.getElementById('sDob').value;             // DOB fetch
-    const sClass = document.getElementById('sClass').value.trim(); // Class fetch
-    const gender = document.getElementById('sGender').value;       // Gender fetch
-    const caste = document.getElementById('sCaste').value.trim();  // Caste fetch
-    const category = document.getElementById('sCategory').value;   // Category fetch
-    const cycle = document.getElementById('sCycle').value;
+    const sClass = document.getElementById('sClass').value.trim();
     const amount = document.getElementById('sAmount').value;
+    const father = document.getElementById('sFather').value.trim();
+    const dob = document.getElementById('sDob').value;
+    const gender = document.getElementById('sGender').value;
+    const category = document.getElementById('sCategory').value;
 
-    // Validation: Zaroori cheezein khali nahi honi chahiye
-    if(!name || !roll || !amount || !gender) {
-        return alert("Please fill Name, Roll No, Gender and Amount!");
-    }
+    if(!name || !roll) return alert("Name aur Roll No zaroori hai!");
 
-    const totalAnnual = parseFloat(amount) * parseInt(cycle);
-
-    // Naya Object jisme saari details hain
+    // Naya Student Object
     const newStudent = {
-        id: Date.now(),
-        name,
-        roll,
-        father,
-        dob,
+        id: roll,
+        roll: roll,         // Purani table ke liye
+        rollNo: roll,       // Login logic ke liye
+        name: name,
+        fatherName: father,
+        father: father,     // Sync ke liye
+        dob: dob,
         currentClass: sClass,
-        gender,
-        caste,
-        category,
-        feeCycle: (cycle == "12") ? "Monthly" : (cycle == "4") ? "Quarterly" : "Annual",
-        totalFees: totalAnnual,
+        class: sClass,
+        gender: gender,
+        category: category,
+        password: "123",    // Default Password
+        totalFees: parseFloat(amount) || 0,
         paidAmount: 0,
-        history: [],
-        marksData: null
-    };
+        photo: document.getElementById('sPhoto')?.value ||"https://cdn-icons-png.flaticon.com/512/3135/3135715.png" // Ye ek default student icon hai
 
-    // LocalStorage mein save karna
+    };
+    // --- DATA SAVING (No Overwrite Logic) ---
+    
+    // Admin Table ke liye save karein
     students.push(newStudent);
     localStorage.setItem('students', JSON.stringify(students));
-    
-    // Form ko reset karna
-    resetForm();
-    
-    // Table ko update karna
-    renderStudents();
-    alert("Student Registered with all details!");
-}
 
+    // Student Login ke liye save karein
+    allStudents.push(newStudent);
+    localStorage.setItem('allStudents', JSON.stringify(allStudents));
+
+   // Fees Sync
+    syncWithStudentPortal(newStudent);
+    
+    // UI Update
+    resetForm();
+    renderStudents();
+
+    alert(`✅ Student Registered!\nID: ${roll}\nPassword: 123`);
+}
 // 2. Form Reset Function (Taaki purana data hata sakein)
 function resetForm() {
     const ids = ['sName', 'sRoll', 'sFather', 'sDob', 'sClass', 'sCaste', 'sAmount'];
@@ -415,7 +420,6 @@ function resetForm() {
     document.getElementById('sCategory').selectedIndex = 0;
 }
 
-// 3. Table mein data dikhane ka function
 function renderStudents() {
     const tbody = document.getElementById('studentList');
     if(!tbody) return;
@@ -424,19 +428,19 @@ function renderStudents() {
     let expected = 0, collected = 0, due = 0;
 
     students.forEach((s, index) => {
-        const balance = s.totalFees - s.paidAmount;
-        expected += s.totalFees;
-        collected += s.paidAmount;
+        const balance = (s.totalFees || 0) - (s.paidAmount || 0);
+        expected += (s.totalFees || 0);
+        collected += (s.paidAmount || 0);
         due += balance;
 
         tbody.innerHTML += `
             <tr>
-                <td><b>#${s.roll}</b></td>
+                <td><b>#${s.roll || s.rollNo}</b></td>
                 <td>
                     <div style="font-weight:600">${s.name}</div>
-                    <small style="color:gray">${s.gender} | ${s.category}</small>
+                    <small style="color:gray">${s.gender || ''} | ${s.category || ''}</small>
                 </td>
-                <td>₹${s.totalFees.toLocaleString()}</td>
+                <td>₹${(s.totalFees || 0).toLocaleString()}</td>
                 <td style="color: ${balance > 0 ? 'red' : 'green'}; font-weight:700">₹${balance.toLocaleString()}</td>
                 <td><span class="badge ${balance <= 0 ? 'badge-paid' : 'badge-due'}">${balance <= 0 ? 'Paid' : 'Due'}</span></td>
                 <td>
@@ -448,28 +452,47 @@ function renderStudents() {
         `;
     });
 
-    // Summary Cards update
     document.getElementById('totalExpected').innerText = "₹" + expected.toLocaleString();
     document.getElementById('totalCollected').innerText = "₹" + collected.toLocaleString();
     document.getElementById('totalDue').innerText = "₹" + due.toLocaleString();
-}
-      
+}   
 
 
       function payFees(index) {
-        let amount = prompt(
-          `Enter payment amount for ${students[index].name}:`
-        );
-        if (amount && !isNaN(amount) && amount > 0) {
-          students[index].paidAmount += parseFloat(amount);
-          students[index].history.push({
-            date: new Date().toLocaleDateString(),
-            amount: parseFloat(amount),
-          });
-          localStorage.setItem("students", JSON.stringify(students));
-          renderStudents();
+    let amount = prompt(`Enter payment amount for ${students[index].name}:`);
+    if (amount && !isNaN(amount)) {
+        students[index].paidAmount = (students[index].paidAmount || 0) + parseFloat(amount);
+        
+        // Dono jagah update karein taaki login mein bhi dikhe
+        localStorage.setItem("students", JSON.stringify(students));
+        
+        // All students list mein bhi update karein
+        let rollToFind = students[index].roll || students[index].rollNo;
+        let sIdx = allStudents.findIndex(std => std.rollNo === rollToFind);
+        if(sIdx !== -1) {
+            allStudents[sIdx].paidAmount = students[index].paidAmount;
+            localStorage.setItem("allStudents", JSON.stringify(allStudents));
         }
-      }
+
+        syncWithStudentPortal(students[index]);
+        renderStudents();
+        alert("Payment Updated!");
+    }
+}
+// 3. Sabse Jaruri: Student Portal Sync
+function syncWithStudentPortal(student) {
+    let schoolFees = JSON.parse(localStorage.getItem('schoolFees')) || {};
+    
+    // Student Dashboard isi format mein data dhoondta hai
+    schoolFees[student.roll || student.rollNo] = {
+        total: student.totalFees,
+        paid: student.paidAmount,
+        pending: student.totalFees - student.paidAmount,
+        lastUpdate: new Date().toLocaleDateString()
+    };
+    
+    localStorage.setItem('schoolFees', JSON.stringify(schoolFees));
+}
       function downloadTC(index) {
         const s = students[index];
         
@@ -496,13 +519,50 @@ function renderStudents() {
         ) {
           students.splice(index, 1);
           localStorage.setItem("students", JSON.stringify(students));
+        localStorage.setItem("allStudents", JSON.stringify(allStudents));
           renderStudents();
         }
       }
 
 
      // Initialize table
-      renderStudents();
+      // 4. Render Table (UI update)
+function renderStudents() {
+    const tbody = document.getElementById('studentList');
+    if(!tbody) return;
+    
+    tbody.innerHTML = '';
+    let expected = 0, collected = 0, due = 0;
+
+    students.forEach((s, index) => {
+        // Function ke andar ye lines check karein
+const balance = (s.totalFees || 0) - (s.paidAmount || 0); // || 0 ka matlab agar data nahi hai toh 0 maano
+expected += (s.totalFees || 0);
+collected += (s.paidAmount || 0);
+
+        tbody.innerHTML += `
+            <tr>
+                <td><b>#${s.roll}</b></td>
+                <td>
+                    <div style="font-weight:600">${s.name}</div>
+                    <small style="color:gray">${s.gender} | ${s.category}</small>
+                </td>
+                <td>₹${s.totalFees.toLocaleString()}</td>
+                <td style="color: ${balance > 0 ? 'red' : 'green'}; font-weight:700">₹${balance.toLocaleString()}</td>
+                <td><span class="badge ${balance <= 0 ? 'badge-paid' : 'badge-due'}">${balance <= 0 ? 'Paid' : 'Due'}</span></td>
+                <td>
+                    <button class="action-btn" onclick="payFees(${index})" style="color:green"><i class="fas fa-hand-holding-usd"></i></button>
+                    <button class="action-btn" onclick="downloadTC(${index})" style="color:orange"><i class="fas fa-file-contract"></i></button>
+                    <button class="action-btn" onclick="deleteStudent(${index})" style="color:red"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>
+        `;
+    });
+
+    document.getElementById('totalExpected').innerText = "₹" + expected.toLocaleString();
+    document.getElementById('totalCollected').innerText = "₹" + collected.toLocaleString();
+    document.getElementById('totalDue').innerText = "₹" + due.toLocaleString();
+}
 
 
     </script>
