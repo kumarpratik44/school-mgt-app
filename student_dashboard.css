@@ -24,12 +24,12 @@ body {
 }
 
 .dashboard-avatar-section img {
-    width: 250px; /* Badi image size */
+    width: 180px; /* Badi image size */
     max-width: 80%;
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
 }
 
-/* .avatar-container {
+.avatar-container {
     position: relative;
     width: 90px;
     height: 90px;
@@ -62,7 +62,7 @@ body {
     font-size: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     border: 1px solid #eee;
-} */
+} 
 
 .main-content { padding: 20px; }
 
