@@ -17,8 +17,8 @@
     </div>
     <div class="dashboard-avatar-section">
         <div class="avatar-container" onclick="document.getElementById('fileInput').click()">
-            <img src="/image/class-1st/index-img1.jpg" 
-                 alt="Student Photo" id="userPhoto">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
+                 alt="" id="userPhoto">
             <div class="edit-badge"><i class="fas fa-camera"></i></div>
             <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="previewImage(event)">
         </div>
@@ -28,7 +28,7 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <i class="fas fa-calendar-check"></i>
-                <h3>85%</h3>
+                <h3 id="attendancePercent">--%</h3> 
                 <p>Attendance</p>
             </div>
             <div class="stat-card">
