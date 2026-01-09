@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    // Name aur Class header mein set karna
+    /// 2. Header Info Update
     const sName = localStorage.getItem("studentName") || "Student";
     const studentData = JSON.parse(localStorage.getItem('currentStudent'));
     
@@ -16,27 +16,51 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('dispClass').innerText = `Class: ${studentData.class}-${studentData.section}`;
     }
 
-    // Default: Pehla data load karein
-    loadDynamicResults();
+    // 3. DONO DATA LOAD KAREIN
+    loadLiveSchedules();   // Teacher wala live schedule
+    loadDynamicResults(); // Admin wala marksheet data
 });
 
 // 2. Tab Switching Logic
-function showTab(tabName) {
+function showTab(tabName, event) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
 
     const activeTab = document.getElementById(tabName);
     if(activeTab) activeTab.style.display = 'block';
     
-    if(event && event.currentTarget) {
+    if(event) {
         event.currentTarget.classList.add('active');
     }
+}
 
-    // Agar Results ya Marksheet tab khule toh data refresh karein
-    if(tabName === 'results' || tabName === 'final-marksheet') {
-        loadDynamicResults();
+// Schedule tab mein Teacher ka post kiya hua data dikhane ke liye
+function loadLiveSchedules() {
+    const student = JSON.parse(localStorage.getItem('currentStudent'));
+    const allNotes = JSON.parse(localStorage.getItem('schoolNotes')) || [];
+    const scheduleContainer = document.getElementById('schedule');
+
+    // Filter: Type 'exam' + Sahi Class
+    const exams = allNotes.filter(n => n.type === 'exam' && n.class === student.class);
+
+    if (exams.length > 0) {
+        let liveHTML = '<h3 style="padding:10px; font-size:14px; color:#764ba2;">Latest from Teacher:</h3>';
+        exams.reverse().forEach(ex => {
+            liveHTML += `
+                <div class="exam-card upcoming" style="border-left: 5px solid #764ba2;">
+                    <div class="exam-date"><span>${ex.date.split('/')[0]}</span><br>${ex.date.split('/')[1]}</div>
+                    <div class="exam-details">
+                        <h4>${ex.subject}</h4>
+                        <p>${ex.content}</p>
+                        <small>Posted on: ${ex.date}</small>
+                    </div>
+                </div>`;
+        });
+        // Static cards ke upar live cards dikhana
+        scheduleContainer.innerHTML = liveHTML + scheduleContainer.innerHTML;
     }
 }
+
 
 // 3. Dynamic Data Fetching & Table Rendering
 function loadDynamicResults() {
@@ -44,15 +68,17 @@ function loadDynamicResults() {
     const allResults = JSON.parse(localStorage.getItem('schoolResults')) || {};
     const myResult = allResults[rollNo];
 
+    // Results Tab ki Table pakadna
+    const resultsTableBody = document.querySelector('.result-table tbody');
+    // Final Marksheet ki Table pakadna
+    const finalTableBody = document.querySelector('.final-table tbody');
+
     if (!myResult) {
         console.log("No marks found for this student yet.");
         return; 
     }
 
-    // Results Tab ki Table pakadna
-    const resultsTableBody = document.querySelector('.result-table tbody');
-    // Final Marksheet ki Table pakadna
-    const finalTableBody = document.querySelector('.final-table tbody');
+    
 
     let resultsHTML = "";
     let finalHTML = "";
@@ -103,6 +129,7 @@ function loadDynamicResults() {
     // Summary Update (Total, Percentage, Result)
     updateSummary(grandTotalObtained, grandMaxPossible);
 }
+
 
 // 4. Helper: Grade Calculation
 function calculateGrade(score, max) {
