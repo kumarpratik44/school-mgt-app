@@ -1,145 +1,183 @@
-// --- 1. SECURITY CHECK ---
+
+/**
+ * SYSTEMATIC STUDENT JS (v2.1) 
+ * All-in-One: Profile, Fees, Attendance, Photo & Leaves
+ */
+
+// --- 1. ACCESS CONTROL ---
 if (localStorage.getItem("studentActive") !== "true") {
     window.location.href = "student_login.html";
 }
 
-// --- 2. GLOBAL PAGE LOAD ---
+// Global variable for easy access
+let student = JSON.parse(localStorage.getItem('currentStudent'));
+
+// --- 2. PAGE LOAD LOGIC ---
 window.onload = function() {
-    renderAllData();
-    if(document.querySelector('.notice-card')) renderAdminNotice();
-    if(document.getElementById('attendancePercent')) updateAttendanceUI();
-    if(document.querySelector('.stat-card')) updateFeeStatus();
-};
-
-// --- 3. MASTER RENDER FUNCTION ---
-function renderAllData() {
-    // LocalStorage se data uthao
-    const student = JSON.parse(localStorage.getItem('currentStudent'));
-
-    // AGAR DATA NAHI HAI TOH LOGIN PAR BHEJO (Safety First)
     if (!student) {
-        // Sirf un pages par login par bheje jo dashboard ke andar hain
-        if(!window.location.href.includes('login')) {
-            window.location.href = 'student-login.html';
-        }
+        window.location.href = "student_login.html";
         return;
     }
+    
+    // Sabse pehle profile data render karein
+    renderAllData(); 
+    
+    // Baaki dashboard features load karein
+    if(document.getElementById('attendancePercent')) updateAttendanceUI();
+    if(document.getElementById('feeTotal') || document.getElementById('feePending')) updateFeeStatus();
+};
 
-    // --- Dashboard Elements ---
+/**
+ * 3. MASTER RENDER FUNCTION (Iska naam wahi hai jo aapne pucha)
+ */
+function renderAllData() {
+    // UI Elements ki IDs fetch karein
     const dispName = document.getElementById('dispName');
     const dispClass = document.getElementById('dispClass');
-    
-    // --- Profile Page Elements ---
     const profName = document.getElementById('profName');
     const profId = document.getElementById('profId');
     const profFather = document.getElementById('profFather');
     const profBlood = document.getElementById('profBlood');
-    const headerBlood = document.getElementById('headerBlood');
+    const userPhoto = document.getElementById('userPhoto');
 
-    // UI Updates with Dynamic Data
+    // Admin Portal ke variables ke hisaab se fallbacks
+    const sRoll = student.rollNo || student.roll || "N/A";
+    const sFather = student.fatherName || student.father || "N/A";
+    const sClass = student.currentClass || student.class || "N/A";
+    const sBlood = student.bloodGroup || "B+";
+
+    // Data Fill-up Logic
     if(dispName) dispName.innerText = `Namaste, ${student.name}! 👋`;
-    
-    // Class aur Section ko profile ke hisaab se dikhana
-    const classDisplay = `Class: ${student.class}-${student.section}`;
-    if(dispClass) dispClass.innerText = `${classDisplay} | F. Name: ${student.fatherName}`;
+    if(dispClass) dispClass.innerText = `Class: ${sClass} | Father: ${sFather}`;
     
     if(profName) profName.innerText = student.name;
-    
-    // ID ya RollNo jo bhi aapne save kiya ho
-    const rollNo = student.rollNo || student.id || "101";
-    if(profId) profId.innerText = `Roll No: ${rollNo} | ${classDisplay}`;
-    
-    if(profFather) profFather.innerText = student.fatherName;
+    if(profId) profId.innerText = `Roll No: ${sRoll} | Class: ${sClass}`;
+    if(profFather) profFather.innerText = sFather;
     if(profBlood) profBlood.innerText = `${student.bloodGroup || "B+"} Positive`;
-    if(headerBlood) headerBlood.innerHTML = `<i class="fas fa-tint"></i> Blood Group: ${student.bloodGroup || "B+"}`;
 
-    // --- Photo Load Logic (Updated) ---
-    const imgElement = document.getElementById('userPhoto');
-    // Pehle dekho kya 'currentStudent' ke andar photo hai?
-    if(imgElement) {
-        if(student.photo) {
-            imgElement.src = student.photo;
-        } else {
-            // Default image agar bache ne photo upload nahi ki
-            imgElement.src = "/image/default-avatar.jpg";
-        }
+    // Photo Loading
+    if(userPhoto) {
+        userPhoto.src = student.photo || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
     }
 }
 
-// --- 4. PHOTO PREVIEW & SAVE (Updated for better Sync) ---
-function previewImage(event) {
-    const file = event.target.files[0];
-    if(!file) return;
-
-    if(file.size > 2 * 1024 * 1024) return alert("Photo size should be less than 2MB");
-
-    const reader = new FileReader();
-    reader.onload = function() {
-        const base64Photo = reader.result; // Ye hamari photo ka data hai
-        
-        const imgElement = document.getElementById('userPhoto');
-        if(imgElement) imgElement.src = base64Photo;
-
-        // 1. Current Session update karein
-        let student = JSON.parse(localStorage.getItem('currentStudent'));
-        if(student) {
-            student.photo = base64Photo;
-            localStorage.setItem('currentStudent', JSON.stringify(student));
-        }
-
-        // 2. SABSE ZAROORI: Main Database (allStudents) ko bhi update karein
-        // Iske bina refresh karne par photo chali jayegi
-        let allStudents = JSON.parse(localStorage.getItem('allStudents')) || [];
-        let rollNo = student.rollNo || student.id;
-        
-        let index = allStudents.findIndex(s => s.rollNo === rollNo);
-        if(index !== -1) {
-            allStudents[index].photo = base64Photo; // Main Database mein photo daal di
-            localStorage.setItem('allStudents', JSON.stringify(allStudents));
-            console.log("Photo permanently saved in Database!");
-        }
+/**
+ * 4. FEES SYNC (Admin Portal 'schoolFees' se synced)
+ */
+function updateFeeStatus() {
+    const sRoll = student.rollNo || student.roll;
+    const schoolFees = JSON.parse(localStorage.getItem('schoolFees')) || {};
+    
+    // Admin se synced data uthao, agar nahi hai toh student object se lo
+    const myFees = schoolFees[sRoll] || {
+        total: student.totalFees || 0,
+        paid: student.paidAmount || 0,
+        pending: (student.totalFees || 0) - (student.paidAmount || 0)
     };
-    reader.readAsDataURL(file);
-}
-// --- 5. LOGOUT FUNCTION ---
-function logout() {
-    if(confirm("Kya aap logout karna chahte hain?")) {
-        localStorage.removeItem("studentActive");
-        // currentStudent ko delete nahi karenge taaki login fast ho sake
-        window.location.href = "student_login.html";
+
+    // Card Displays
+    const feePendingEl = document.getElementById('feePending');
+    const feePaidEl = document.getElementById('feePaid');
+    const feeTotalEl = document.getElementById('feeTotal');
+
+    if(feePendingEl) {
+        feePendingEl.innerText = "₹" + myFees.pending.toLocaleString();
+        feePendingEl.style.color = myFees.pending > 0 ? "#e11d48" : "#059669";
+    }
+    if(feePaidEl) feePaidEl.innerText = "₹" + myFees.paid.toLocaleString();
+    if(feeTotalEl) feeTotalEl.innerText = "₹" + myFees.total.toLocaleString();
+    
+    // Detailed Tuition element agar ho
+    if(document.getElementById('feeTuition')) {
+        document.getElementById('feeTuition').innerText = "₹" + myFees.total.toLocaleString();
     }
 }
 
-// --- 6. ATTENDANCE & FEES (Dashboard Specific) ---
+/**
+ * 5. ATTENDANCE LOGIC
+ */
 function updateAttendanceUI() {
-    const myRoll = localStorage.getItem("rollNo");
+    const sRoll = student.rollNo || student.roll;
     const history = JSON.parse(localStorage.getItem('attendanceData')) || {};
     let totalDays = Object.keys(history).length;
     let presentDays = 0;
 
     if (totalDays > 0) {
         for (let date in history) {
-            if (history[date][myRoll] === 'P') presentDays++;
+            if (history[date][sRoll] === 'P') presentDays++;
         }
         let percent = Math.round((presentDays / totalDays) * 100);
         const el = document.getElementById('attendancePercent');
         if(el) {
             el.innerText = percent + "%";
-            el.style.color = (percent < 75) ? "#ff4d4d" : "#00b09b";
+            el.style.color = (percent < 75) ? "#e11d48" : "#059669";
         }
     }
 }
 
-function updateFeeStatus() {
-    const student = JSON.parse(localStorage.getItem('currentStudent'));
-    const allFeeRecords = JSON.parse(localStorage.getItem('studentFees')) || [];
-    const paid = allFeeRecords
-                .filter(f => f.name === student.name)
-                .reduce((sum, f) => sum + parseInt(f.amount), 0);
+/**
+ * 6. LEAVE REQUEST LOGIC
+ */
+function sendLeaveRequest() {
+    const dates = document.getElementById('leaveDates')?.value;
+    const reason = document.getElementById('leaveReason')?.value;
 
-    const pending = 20000 - paid; // Example Base Fee
-    const feeDisplay = document.querySelectorAll('.stat-card h3');
-    if(feeDisplay.length >= 2) {
-        feeDisplay[1].innerText = `₹${pending > 0 ? pending : 0}`;
+    if(!dates || !reason) return alert("Please enter Dates and Reason!");
+
+    const leaveData = {
+        rollNo: student.rollNo || student.roll,
+        name: student.name,
+        dates: dates,
+        reason: reason,
+        status: "Pending",
+        time: new Date().toLocaleString()
+    };
+
+    let allLeaves = JSON.parse(localStorage.getItem('leaveRequests')) || [];
+    allLeaves.push(leaveData);
+    localStorage.setItem('leaveRequests', JSON.stringify(allLeaves));
+
+    alert("✅ Leave Request Sent Successfully!");
+    document.getElementById('leaveDates').value = "";
+    document.getElementById('leaveReason').value = "";
+}
+
+/**
+ * 7. PHOTO UPLOAD & PERMANENT STORAGE
+ */
+function previewImage(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function() {
+        const base64Photo = reader.result;
+        if(document.getElementById('userPhoto')) document.getElementById('userPhoto').src = base64Photo;
+
+        // Update current session
+        student.photo = base64Photo;
+        localStorage.setItem('currentStudent', JSON.stringify(student));
+
+        // Update Main Database (allStudents)
+        let allStudents = JSON.parse(localStorage.getItem('allStudents')) || [];
+        let sRoll = student.rollNo || student.roll;
+        let idx = allStudents.findIndex(s => (s.rollNo === sRoll || s.roll === sRoll));
+        if(idx !== -1) {
+            allStudents[idx].photo = base64Photo;
+            localStorage.setItem('allStudents', JSON.stringify(allStudents));
+            alert("✅ Profile Photo Updated!");
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/**
+ * 8. LOGOUT
+ */
+function logout() {
+    if(confirm("Logout confirm karein?")) {
+        localStorage.removeItem("studentActive");
+        localStorage.removeItem("currentStudent");
+        window.location.href = "student_login.html";
     }
 }
