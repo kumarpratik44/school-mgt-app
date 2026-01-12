@@ -48,6 +48,32 @@
             <p>📢 Tomorrow is holiday on the occasion of "School Foundation Day".</p>
             <span>2 Hours ago</span>
         </div>
+        <div class="section">
+    <h3><i class="fas fa-file-invoice-dollar"></i> Detailed Fees Status</h3>
+    <div class="timetable-list" style="background: #fff; padding: 15px; border-radius: 10px;">
+        <div class="time-item"><span>Tuition Fee:</span> <strong id="feeTuition">₹0</strong></div>
+        <div class="time-item"><span>Exam Fee:</span> <strong id="feeExam">₹0</strong></div>
+        <div class="time-item"><span>Transport Fee:</span> <strong id="feeTransport">₹0</strong></div>
+        <hr>
+        <div class="time-item" style="color: var(--danger);">
+            <span>Total Pending:</span> <strong id="feeTotal">₹0</strong>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h3><i class="fas fa-envelope-open-text"></i> Apply for Leave</h3>
+    <div class="notice-card" style="display: flex; flex-direction: column; gap: 10px;">
+        <input type="text" id="leaveDates" placeholder="Select Dates (e.g. 12th - 14th Jan)" 
+               style="padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+        <textarea id="leaveReason" placeholder="Reason for leave..." 
+                  style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; resize: none;"></textarea>
+        <button onclick="sendLeaveRequest()" 
+                style="background: #0056b3; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;">
+            Send to Class Teacher
+        </button>
+    </div>
+</div>
 
         <div class="section">
             <h3><i class="fas fa-clock"></i> Today's Timetable</h3>
