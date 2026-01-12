@@ -109,7 +109,96 @@ body {
     padding: 15px;
     border-bottom: 1px solid #f1f1f1;
 }
-/* Bottom Nav */
+/* --- Yahan se naya code shuru --- */
+
+/* Fee Section & Leave Section Styling */
+.section {
+    margin-top: 25px;
+    background: white;
+    padding: 15px;
+    border-radius: 18px; /* Purane cards se match karne ke liye */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+}
+
+.section h3 {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section h3 i {
+    color: #764ba2; /* Purple theme se match karne ke liye */
+}
+
+/* Fee List Styling */
+.fee-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.fee-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed #f1f1f1;
+}
+
+.fee-item:last-child {
+    border-bottom: none;
+    margin-top: 5px;
+    padding-top: 15px;
+    border-top: 2px solid #f8f9fa;
+}
+
+.fee-item span {
+    color: #777;
+    font-size: 13px;
+}
+
+.fee-item strong {
+    color: #333;
+    font-size: 14px;
+}
+
+/* Leave Application Form Styling */
+.leave-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.leave-form input, 
+.leave-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    background: #fafafa;
+    box-sizing: border-box; /* Padding se width na badhe */
+}
+
+.btn-apply {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.btn-apply:active {
+    transform: scale(0.97);
+}
+
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -133,3 +222,36 @@ body {
 }
 .nav-item i { font-size: 22px; display: block; margin-bottom: 2px; }
 .nav-item span { font-size: 10px; font-weight: 500; }
+/* --- Desktop aur Tablet ke liye adjustment --- */
+@media (min-width: 768px) {
+    .main-content {
+        max-width: 800px; /* Laptop par content bahut zyada na faile */
+        margin: 0 auto;   /* Center mein rakhe */
+    }
+
+    .header {
+        text-align: center;
+        border-radius: 0 0 50px 50px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 cards hi rakhega lekin bade size mein */
+        gap: 20px;
+    }
+
+    .bottom-nav {
+        max-width: 400px; /* Desktop par navigation bar ko chota aur center mein rakhega */
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 30px;
+        margin-bottom: 15px;
+    }
+}
+
+/* Chote phones ke liye gap fix */
+@media (max-width: 360px) {
+    .stats-grid {
+        gap: 8px;
+    }
+    .stat-card h3 { font-size: 12px; }
+}
