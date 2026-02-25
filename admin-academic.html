@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Academic Control - AI Edition</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+    /* 1. RESET & GLOBAL VARIABLES */
+    :root {
+        --primary: #4e73df;
+        --secondary: #1cc88a;
+        --dark: #2c3e50;
+        --light: #f8f9fc;
+        --ai-gradient: linear-gradient(135deg, #6610f2, #6f42c1);
+        --white: #ffffff;
+    }
+
+    * { 
+        box-sizing: border-box; 
+        -webkit-tap-highlight-color: transparent; 
+        margin: 0; padding: 0; 
+    }
+
+    body {
+        font-family: "Poppins", sans-serif;
+        background: #f4f6f9;
+        color: #333;
+        /* Padding for Header & Footer visibility */
+        padding: 85px 12px 95px 12px; 
+        line-height: 1.6;
+    }
+
+    /* 2. FIXED HEADER (STAYS ON TOP) */
+    .app-header {
+        position: fixed !important; 
+        top: 0; left: 0; right: 0;
+        background: var(--ai-gradient) !important;
+        color: white !important;
+        padding: 15px 20px;
+        text-align: center;
+        z-index: 9999 !important; /* Sabse upar */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-radius: 0 0 20px 20px;
+        display: flex !important; /* Force display before JS */
+        flex-direction: column;
+        align-items: center;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .app-header h1 { font-size: 1.2rem; margin: 0; display: flex; align-items: center; gap: 8px; }
+    .app-header p { font-size: 0.75rem; opacity: 0.9; margin-top: 2px; }
+
+    /* 3. FIXED FOOTER (STAYS AT BOTTOM) */
+    .app-footer {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: var(--white); display: flex;
+        justify-content: space-around; align-items: center;
+        height: 75px; border-top: 1px solid #e2e8f0;
+        z-index: 5000; box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    .nav-item {
+        text-decoration: none; color: #94a3b8;
+        font-size: 10px; font-weight: 700;
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        flex: 1;
+    }
+    .nav-item i { font-size: 22px; }
+    .nav-item.active { color: var(--primary); }
+
+    /* 4. RESPONSIVE CARDS & GRIDS */
+    .card {
+        background: var(--white); border-radius: 16px;
+        padding: 20px; margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    h2 {
+        color: var(--dark); font-size: 1.05rem;
+        margin-bottom: 18px; border-left: 5px solid var(--primary);
+        padding-left: 12px; display: flex; align-items: center; gap: 10px;
+    }
+
+    .grid {
+        display: grid; grid-template-columns: 1fr; gap: 18px;
+    }
+
+    @media (min-width: 768px) {
+        .grid { grid-template-columns: 1fr 1fr; }
+        body { padding: 100px 40px 110px 40px; }
+        .card { max-width: 1000px; margin-left: auto; margin-right: auto; }
+    }
+
+    /* 5. FORM ELEMENTS (MOBILE READY) */
+    label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    
+    input, select, .select-box {
+        width: 100%; padding: 13px 15px; margin-top: 5px;
+        border-radius: 10px; border: 1px solid #cbd5e1;
+        font-size: 16px; background: white; transition: 0.2s;
+    }
+    input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(78,115,223,0.1); }
+
+    /* 6. SUBJECT DROPDOWN (FIXED) */
+    .multi-select { position: relative; }
+    .checkbox-list {
+        display: none; position: absolute; width: 100%;
+        background: white; border: 1px solid #e2e8f0;
+        border-radius: 12px; z-index: 6000;
+        max-height: 250px; overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 6px; margin-top: 5px;
+    }
+    .checkbox-item { 
+        padding: 10px 12px; display: flex; align-items: center; 
+        border-bottom: 1px solid #f1f5f9; border-radius: 8px;
+    }
+    .checkbox-item:hover { background: #f8fafc; }
+    .checkbox-item label { 
+        display: flex !important; align-items: center !important; 
+        gap: 12px; text-transform: none !important; font-size: 14px !important;
+        cursor: pointer; width: 100%; font-weight: 500 !important; color: #334155 !important;
+    }
+    .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+
+    /* 7. EXPERT MAPPING & PERFORMANCE */
+    .expert-row {
+        display: flex; flex-direction: column;
+        gap: 10px; background: #f8fafc;
+        padding: 15px; border-radius: 12px; margin-bottom: 10px;
+        border: 1px solid #edf2f7;
+    }
+    @media (min-width: 480px) {
+        .expert-row { flex-direction: row; justify-content: space-between; align-items: center; }
+        .sub-teacher-select { width: 60% !important; }
+    }
+
+    /* 8. AI BUTTONS */
+    .btn-ai {
+        background: var(--ai-gradient); color: white;
+        font-weight: 700; border: none; padding: 16px;
+        border-radius: 12px; cursor: pointer; transition: 0.3s;
+        text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(102, 16, 242, 0.2);
+    }
+    .btn-ai:active { transform: scale(0.97); }
+
+    /* 9. STATUS BADGES */
+    .status-badge {
+        padding: 5px 12px; border-radius: 8px;
+        font-size: 11px; font-weight: 700; color: white;
+    }
+    .health-good { background: var(--secondary); }
+    .health-avg { background: #f6c23e; }
+
+    /* 10. PRINTING LOGIC */
+    @media print {
+        .app-header, .app-footer, .btn-ai, .no-print, .mobile-back-btn { display: none !important; }
+        body { padding: 0; background: white; }
+        .card { box-shadow: none; border: 1px solid #eee; }
+    }
+</style>
+  </head>
+  <body>
+    <div
+      style="
+        background: var(--ai-gradient);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        border-radius: 0 0 20px 20px;
+        margin-bottom: 20px;
+        position: relative;
+      "
+    >
+      <h1 style="margin: 0; font-size: 1.5rem">
+        <i class="fas fa-graduation-cap"></i> Academic Control Center
+      </h1>
+      <p style="margin: 5px 0 0; font-size: 0.8rem; opacity: 0.9">
+        AI-Powered School Management Module
+      </p>
+      <div id="liveClock" style="font-weight: 600; color: #ffffff;"></div>
+      
+    </div>
+
+    <div
+      class="mobile-back-btn"
+      onclick="location.href = 'admin_dashboard.html'"
+      style="
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        cursor: pointer;
+      "
+    >
+      <i class="fas fa-home"></i>
+    </div>
+
+    <style>
+      /* Chote screens par text chhupane ke liye */
+      @media (max-width: 600px) {
+        .hide-mobile {
+          display: none;
+        }
+        .mobile-back-btn {
+          display: flex;
+        }
+      }
+      @media (min-width: 601px) {
+        .mobile-back-btn {
+          display: none;
+        }
+      }
+    </style>
+
+    <div class="card">
+      <h2><i class="fas fa-layer-group"></i> 1. Class & Subject Setup</h2>
+      <div class="grid">
+        <div>
+          <label>Target Class</label>
+          <select id="targetClass">
+            <option value="">Select Class</option><option>Nursery</option><option>LKG</option> <option>UKG</option>
+              <option>1st</option><option>2nd</option><option>3rd</option>
+              <option>4th</option><option>5th</option> <option>6th</option><option>7th</option>
+              <option>8th</option><option>9th</option><option>10th</option>
+          </select>
+        </div>
+        <div>
+         <label>Select Subjects</label>
+<div class="multi-select" id="subjectDropdown">
+  <div class="select-box" onclick="toggleDropdown()">
+    <span id="selectedSubjectsText">Select Subjects</span>
+    <i class="fas fa-chevron-down"></i>
+  </div>
+  <div class="checkbox-list" id="subjectCheckboxList"></div>
+</div>
+        </div>
+      </div>
+      <button
+        class="btn-ai"
+        style="margin-top: 15px"
+        onclick="saveClassConfig()"
+      >
+        Save Class Config
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>
+        <i class="fas fa-user-tie"></i> 2. AI Assignment (Class Teacher &
+        Experts)
+      </h2>
+      <div class="grid">
+        <div>
+          <label>Class & Section</label>
+          <div style="display: flex; gap: 5px">
+            <select id="assignClass" onchange="generateSubjectTeacherRows()">
+              <option value="">Select Class</option><option>Nursery</option><option>LKG</option> <option>UKG</option>
+              <option>1st</option><option>2nd</option><option>3rd</option>
+              <option>4th</option><option>5th</option> <option>6th</option><option>7th</option>
+              <option>8th</option><option>9th</option><option>10th</option>
+             
+            </select>
+            <select id="assignSection">
+              <option>A</option>
+              <option>B</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>Class Teacher (AI Suggested)</label>
+          <select id="staffListDropdown"></select>
+        </div>
+      </div>
+
+      <div
+        id="subjectExpertPanel"
+        style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px"
+      >
+        <p style="font-size: 13px; font-weight: bold; color: var(--primary)">
+          Subject Experts Mapping:
+        </p>
+        <div id="subjectTeacherList"></div>
+      </div>
+
+      <button
+        class="btn-ai"
+        onclick="saveAcademicAssignments()"
+        style="margin-top: 15px; background: var(--secondary)"
+      >
+        Confirm Mapping
+      </button>
+    </div>
+
+ <div class="card">
+  <h2><i class="fas fa-robot"></i> 3. AI Timetable Generator</h2>
+  <div class="grid">
+    <div>
+      <label>Start Time</label>
+      <input type="time" id="startTime" value="08:00" />
+    </div>
+    <div>
+      <label>Periods</label>
+      <select id="periodCount">
+        <option value="6">6</option>
+        <option value="8" selected>8</option>
+      </select>
+    </div>
+    <div>
+      <label>Duration (Min)</label>
+      <input type="number" id="duration" value="40" />
+    </div>
+    <div>
+      <label>Break After</label>
+      <input type="number" id="breakAfter" value="4" />
+    </div>
+  </div>
+
+  <button
+    class="btn-ai"
+    onclick="generateAITimetable()"
+    style="margin-top: 15px"
+  >
+    Generate Schedule
+  </button>
+
+  <div
+    id="timetablePreview"
+    style="margin-top: 15px; font-size: 13px; color: #555; line-height: 1.6"
+  ></div>
+
+  <!-- ✅ NEW BUTTON ADDED HERE -->
+  <button
+    onclick="saveGeneratedTimetable()"
+    style="margin-top:12px; width:100%; padding:12px; background:#22c55e; color:white; border:none; border-radius:8px; font-weight:700;"
+  >
+    💾 Save Final Timetable
+  </button>
+</div>
+
+    <div class="card">
+      <h2><i class="fas fa-heartbeat"></i> 4. Teacher Health & Performance</h2>
+      <div id="teacherPerformanceGrid"></div>
+    </div>
+
+   <script>
+const SUBJECT_MASTER = ["English", "Hindi", "Mathematics", "Science", "Social Science", "Physics", "Chemistry", "Biology", "Computer", "GK", "Moral Science", "Sanskrit", "Drawing", "Physical Education"];
+
+// ================= LIVE DATE =================
+const clockEl = document.getElementById("liveClock");
+if (clockEl) clockEl.innerText = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// ================= 1. SUBJECT MULTI-SELECT LOGIC =================
+function loadSubjectOptions() {
+    const list = document.getElementById("subjectCheckboxList");
+    if (!list) return;
+
+    list.innerHTML = SUBJECT_MASTER.map(sub => `
+        <div class="checkbox-item">
+            <label style="display:flex; align-items:center; gap:10px; text-transform:none; cursor:pointer;">
+                <input type="checkbox" value="${sub}" onchange="updateSubjectSelection()"> ${sub}
+            </label>
+        </div>
+    `).join("");
+}
+
+function toggleDropdown() {
+    const list = document.getElementById("subjectCheckboxList");
+    list.style.display = list.style.display === "block" ? "none" : "block";
+}
+
+function updateSubjectSelection() {
+    const list = document.getElementById("subjectCheckboxList");
+    const selected = Array.from(list.querySelectorAll("input:checked")).map(cb => cb.value);
+    document.getElementById("selectedSubjectsText").innerText = selected.length > 0 ? selected.join(", ") : "Select Subjects";
+}
+
+// ================= 2. SAVE CLASS CONFIG =================
+function saveClassConfig() {
+    const className = document.getElementById("targetClass").value;
+    const selectedSubs = Array.from(document.querySelectorAll("#subjectCheckboxList input:checked")).map(cb => cb.value);
+
+    if (!className || selectedSubs.length === 0) {
+        alert("Please select Class and at least one Subject!");
+        return;
+    }
+
+    let classData = JSON.parse(localStorage.getItem("schoolClasses")) || [];
+    const idx = classData.findIndex(c => c.className === className);
+
+    if (idx > -1) classData[idx].subjects = selectedSubs;
+    else classData.push({ className, subjects: selectedSubs });
+
+    localStorage.setItem("schoolClasses", JSON.stringify(classData));
+    alert("Configuration Saved! Now you can assign teachers in Step 2.");
+    
+    // Page reload ki jagah dropdown update karein taaki data loss na ho
+    updateAssignClassDropdown(); 
+}
+
+// Naya function dropdown refresh ke liye
+function updateAssignClassDropdown() {
+    const classes = JSON.parse(localStorage.getItem("schoolClasses")) || [];
+    const assignClassDropdown = document.getElementById("assignClass");
+    assignClassDropdown.innerHTML = '<option value="">Select Class</option>';
+    classes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.className;
+        opt.textContent = c.className;
+        assignClassDropdown.appendChild(opt);
+    });
+}
+
+// ================= 3. TEACHER MAPPING LOGIC =================
+function loadStaffAndSuggest() {
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const dropdown = document.getElementById("staffListDropdown");
+    if (!dropdown) return;
+
+    const teachers = staff.filter(s => s.category === "Teaching");
+    dropdown.innerHTML = '<option value="">-- Select Class Teacher --</option>';
+    
+    teachers.forEach(t => {
+        const name = t.name || `${t.fName || ''} ${t.lName || ''}`.trim() || "Unnamed Teacher";
+        dropdown.innerHTML += `<option value="${t.id}">${name} (${t.sub || 'General'})</option>`;
+    });
+}
+
+function generateSubjectTeacherRows() {
+    const selectedClass = document.getElementById("assignClass").value;
+    const classes = JSON.parse(localStorage.getItem("schoolClasses")) || [];
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const container = document.getElementById("subjectTeacherList");
+
+    const classInfo = classes.find(c => c.className === selectedClass);
+    if (!classInfo) {
+        container.innerHTML = "<p style='color:red; font-size:12px;'>First configure subjects for this class in Step 1.</p>";
+        return;
+    }
+
+    container.innerHTML = classInfo.subjects.map(sub => {
+        // Teacher filter logic improved
+        const experts = staff.filter(t => {
+            if (t.category !== "Teaching") return false;
+            // Dono 'sub' aur 'subject' key ko check kar raha hai
+            const teacherSub = (t.sub || t.subject || "").toLowerCase();
+            const targetSub = sub.toLowerCase();
+            return teacherSub.includes(targetSub) || targetSub.includes(teacherSub);
+        });
+
+        return `
+        <div class="expert-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#f9fafb; padding:10px; border-radius:8px;">
+            <span style="font-size:13px; font-weight:600;">${sub}</span>
+            <select class="sub-teacher-select" data-subject="${sub}" style="width:60%; padding:8px; border-radius:5px; border:1px solid #ddd;">
+                <option value="">-- Select Expert --</option>
+                ${experts.map(e => `<option value="${e.id}">${e.name || e.fName}</option>`).join("")}
+                <option value="external">External Teacher</option>
+            </select>
+        </div>`;
+    }).join("");
+}
+// ================= 4. TIMETABLE GENERATOR =================
+function generateAITimetable() {
+    const start = document.getElementById("startTime").value;
+    const periods = parseInt(document.getElementById("periodCount").value);
+    const dur = parseInt(document.getElementById("duration").value);
+    const breakAfter = parseInt(document.getElementById("breakAfter").value);
+
+    let [hour, min] = start.split(":").map(Number);
+    let preview = ["<div style='background:#f0f4ff; padding:10px; border-radius:8px;'>"];
+
+    for (let i = 1; i <= periods; i++) {
+        let sLabel = `${String(hour).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+        min += dur;
+        hour += Math.floor(min / 60);
+        min %= 60;
+        let eLabel = `${String(hour).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+
+        preview.push(`<div style="border-bottom:1px solid #ddd; padding:5px 0;"><b>Period ${i}:</b> ${sLabel} - ${eLabel}</div>`);
+
+        if (i === breakAfter) {
+            preview.push("<div style='color:#e67e22; padding:5px 0;'><b>🍴 Recess (20 Min Break)</b></div>");
+            min += 20;
+            hour += Math.floor(min / 60);
+            min %= 60;
+        }
+    }
+    preview.push("</div>");
+    document.getElementById("timetablePreview").innerHTML = preview.join("");
+}
+
+
+function saveGeneratedTimetable() {
+    const selectedClass = document.getElementById("assignClass").value;
+    const periods = parseInt(document.getElementById("periodCount").value);
+    const start = document.getElementById("startTime").value;
+    const dur = parseInt(document.getElementById("duration").value);
+    const breakAfter = parseInt(document.getElementById("breakAfter").value);
+
+    if (!selectedClass) return alert("Select class first!");
+
+    let [hour, min] = start.split(":").map(Number);
+
+    const subjectTeacherMap = {};
+    document.querySelectorAll(".sub-teacher-select").forEach(sel => {
+        subjectTeacherMap[sel.dataset.subject] = sel.value;
+    });
+
+    const subjects = Object.keys(subjectTeacherMap);
+    let timetable = [];
+
+    for (let i = 1; i <= periods; i++) {
+        let sTime = `${String(hour).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+        min += dur;
+        hour += Math.floor(min / 60);
+        min %= 60;
+        let eTime = `${String(hour).padStart(2,"0")}:${String(min).padStart(2,"0")}`;
+
+        const subject = subjects[(i-1) % subjects.length];
+
+        timetable.push({
+            period: i,
+            start: sTime,
+            end: eTime,
+            subject: subject,
+            teacherId: subjectTeacherMap[subject] || "TBD"
+        });
+
+        if (i === breakAfter) {
+            min += 20;
+            hour += Math.floor(min / 60);
+            min %= 60;
+        }
+    }
+
+    let allTT = JSON.parse(localStorage.getItem("schoolTimetables")) || {};
+    allTT[selectedClass] = timetable;
+
+    localStorage.setItem("schoolTimetables", JSON.stringify(allTT));
+    alert("✅ Timetable Saved for " + selectedClass);
+}
+
+// ================= 5. PERFORMANCE PANEL =================
+function loadPerformance() {
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const container = document.getElementById("teacherPerformanceGrid");
+    if(!container) return;
+
+    container.innerHTML = staff.slice(0, 5).map(t => {
+        const score = t.performance || Math.floor(Math.random() * 20 + 78);
+        return `
+        <div class="expert-row">
+            <span>${t.name || t.fName || 'Teacher'}</span>
+            <span class="status-badge ${score > 85 ? 'health-good' : 'health-avg'}">AI Index: ${score}%</span>
+        </div>`;
+    }).join("");
+}
+
+// Admin Academic Page ki JS mein ye update karein
+function saveAcademicAssignments() {
+    const selectedClass = document.getElementById("assignClass").value;
+    const selectedSection = document.getElementById("assignSection").value;
+    const classTeacherId = document.getElementById("staffListDropdown").value;
+
+    if (!selectedClass || !selectedSection || !classTeacherId) {
+        alert("Please select Class, Section and Class Teacher!");
+        return;
+    }
+
+    // 1. All Staff data update karein
+    let staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    let teacherIdx = staff.findIndex(t => t.id === classTeacherId);
+
+    if (teacherIdx > -1) {
+        staff[teacherIdx].assignedClass = selectedClass;
+        staff[teacherIdx].assignedSection = selectedSection;
+        localStorage.setItem("schoolStaff", JSON.stringify(staff));
+
+        // 2. AGAR yahi teacher abhi logged in hai, toh uska session bhi update karein
+        let activeTeacher = JSON.parse(localStorage.getItem("activeTeacher"));
+        if (activeTeacher && activeTeacher.id === classTeacherId) {
+            activeTeacher.assignedClass = selectedClass;
+            activeTeacher.assignedSection = selectedSection;
+            localStorage.setItem("activeTeacher", JSON.stringify(activeTeacher));
+        }
+    }
+
+    // 3. Mapping save karein
+    let mappings = JSON.parse(localStorage.getItem("classTeacherMappings")) || {};
+    const key = `${selectedClass}-${selectedSection}`;
+    mappings[key] = classTeacherId;
+
+    localStorage.setItem("classTeacherMappings", JSON.stringify(mappings));
+    alert(`✅ 1st-A Assigned to Teacher Successfully!`);
+}
+
+
+
+// ================= INITIALIZE =================
+window.onload = () => {
+    loadSubjectOptions();
+    loadStaffAndSuggest();
+    loadPerformance();
+
+    // Populate assignment class dropdown
+    const classes = JSON.parse(localStorage.getItem("schoolClasses")) || [];
+    const assignClassDropdown = document.getElementById("assignClass");
+    classes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.className;
+        opt.textContent = c.className;
+        assignClassDropdown.appendChild(opt);
+    });
+};
+
+// Global click to close dropdown
+document.addEventListener("click", (e) => {
+    const dropdown = document.getElementById("subjectDropdown");
+    if (dropdown && !dropdown.contains(e.target)) {
+        document.getElementById("subjectCheckboxList").style.display = "none";
+    }
+});
+</script>
+<footer class="app-footer no-print">
+    <a href="admin-dashboard.html" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </a>
+    <a href="student_mgt.html" class="nav-item">
+        <i class="fas fa-user-graduate"></i>
+        <span>Students</span>
+    </a>
+    <a href="admin-academic.html" class="nav-item active">
+        <i class="fas fa-book-reader"></i>
+        <span>Academic</span>
+    </a>
+    <a href="admin-staff.html" class="nav-item">
+        <i class="fas fa-chalkboard-teacher"></i>
+        <span>Staff</span>
+    </a>
+    <a href="settings.html" class="nav-item">
+        <i class="fas fa-cog"></i>
+        <span>Settings</span>
+    </a>
+</footer>
+  </body>
+</html>
