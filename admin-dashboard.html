@@ -81,7 +81,41 @@
         width: calc(100% - 260px);
         padding: 30px;
       }
+.ai-insight-bar {
+    background: #ffffff;
+    border: 1px dashed #4361ee;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(67, 97, 238, 0.05);
+}
 
+.ai-badge {
+    background: #4361ee;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.ai-content {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Optional: Pulse effect to make it look "Alive" */
+@keyframes aiPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+#aiStatusText { animation: aiPulse 2s infinite ease-in-out; }
       /* Welcome Banner with Cartoon */
       .welcome-banner {
         background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -240,11 +274,26 @@
           width: 80px;
         }
       }
+
+      .dashboard-filter {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-filter select,
+.dashboard-filter input {
+    padding: 6px 10px;
+    border-radius: 6px;
+}
     </style>
   </head>
   <body>
     <aside class="sidebar">
       <div class="sidebar-brand"><i class="fas fa-university"></i> EDU-HUB</div>
+   
+        </div>
       <nav class="nav-links">
         <a href="admin-dashboard.html" class="nav-item active"
           ><i class="fas fa-home"></i> <span>Dashboard</span></a
@@ -262,23 +311,33 @@
         <a href="admin-students.html" class="nav-item"
           ><i class="fas fa-user-graduate"></i> <span>Student Mgt</span></a
         >
-        <a href="student_fee_mgt.html" class="nav-item"
-          ><i class="fas fa-money-bill-wave"></i> <span>Fee Collection</span></a
+        <a href="admin-financehub.html" class="nav-item"
+          ><i class="fas fa-wallet"></i> <span>Total Revenue</span></a
         >
         <a href="admin-results.html" class="nav-item"
           ><i class="fas fa-chart-line"></i> <span>Exam Results</span></a
         >
+        <a href="admin-academic.html" class="nav-item"
+          ><i class="fas fa-book"></i> <span>Academic</span></a
+        >
       </nav>
-      <a href="index.html" class="nav-item" style="color: var(--danger)"
+      <a href="#" onclick="logoutAdmin()" class="nav-item" style="color: var(--danger)">
         ><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a
       >
     </aside>
 
     <main class="main-content">
+      <div class="ai-insight-bar">
+    <div class="ai-header">
+        <span class="ai-badge"><i class="fas fa-robot"></i> AI ANALYSIS</span>
+    </div>
+    <div id="aiStatusText" class="ai-content">Analyzing institution data...</div>
+</div>
       <div class="welcome-banner">
         <div class="welcome-text">
           <h1>Hello, Super Admin!</h1>
           <p>Welcome back! All of your Data has been updated.</p>
+             <div id="liveClock" style="font-weight: 600; color: #ffffff;"></div>
         </div>
         <img
           src="https://cdn-icons-png.flaticon.com/512/3449/3449642.png"
@@ -286,58 +345,121 @@
           class="welcome-img"
         />
       </div>
-
+      
       <div class="stats-grid">
-        <div class="stat-card">
-          <i class="fas fa-users-cog"></i>
+        <div class="stat-card" style="border-left: 5px solid #4361ee;">
+          <i class="fas fa-users-cog" style="color: #4361ee"></i>
           <span>Total Staff</span>
           <h2 id="staffCount">0</h2>
         </div>
-        <div class="stat-card">
-          <i class="fas fa-user-graduate"></i>
+        <div class="stat-card" style="border-left: 5px solid #4361ee;">
+          <i class="fas fa-user-graduate"style="color: #4361ee"></i>
           <span>Total Students</span>
           <h2 id="studentCount">0</h2>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="border-left: 5px solid #10b981;">
           <i class="fas fa-hand-holding-usd" style="color: #10b981"></i>
-          <span>Monthly Fees [cite: 5]</span>
+          <span>Monthly Fees </span>
           <h2 id="totalFees">₹0</h2>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="border-left: 5px solid #f59e0b;">
           <i class="fas fa-file-invoice-dollar" style="color: #f59e0b"></i>
-          <span>Salary Paid [cite: 19, 30]</span>
+          <span>Salary Paid </span>
           <h2 id="totalSalary">₹0</h2>
         </div>
-        <div class="stat-card">
+        <div class="stat-card"style="border-left: 5px solid #f72585">
           <i class="fas fa-exclamation-circle" style="color: var(--danger)"></i>
           <span>Total Dues </span>
           <h2 id="totalDues">₹0</h2>
         </div>
-      </div>
+        
 
-      <div class="bottom-grid">
-        <div class="card notes-area">
-          <h3><i class="fas fa-bullhorn"></i> Circular Notes</h3>
-          <textarea
-            id="adminNote"
-            placeholder="Aaj ka notice yahan likhein..."
-          ></textarea>
-          <button
-            onclick="saveNote()"
-            style="
-              width: 100%;
-              padding: 10px;
-              background: var(--primary);
-              color: white;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              margin-top: 10px;
-            "
-          >
-            Circulate Now
-          </button>
+<!-- Revenue Card -->
+<div class="stat-card" style="border-left: 5px solid #16a34a;">
+    <i class="fas fa-wallet" style="color: #16a34a;"></i>
+    <span>Revenue</span> 
+    <h2 id="dashRevenue">₹ 0</h2>
+</div>
+    
+       <div class="stat-card" style="border-left: 5px solid #ef4444;">
+        <i class="fas fa-hand-holding-usd" style="color: #ef4444;"></i>
+        <span>Expenses</span> 
+            <h2 id="dashExpenses">₹ 0</h2>
+            </div>
+        
+    
+      <div class="stat-card" style="border-left: 5px solid #0056b3;">
+        <i class="fas fa-chart-line" style="color: #0056b3;"></i>
+        <span>Profit</span> 
+            <h2 id="dashProfit">₹ 0</h2>
+     </div>
+    
+
+        <div class="stat-card" style="border-left: 5px solid #10b981;">
+    <i class="fas fa-chart-pie" style="color: #10b981"></i>
+    <span>Fee Collection Ratio</span>
+    <h2 id="collectionRatio">0%</h2>
+    </div>
+
+    <div class="stat-card" style="border-left: 5px solid #4361ee;">
+    <i class="fas fa-user-check" style="color: #4361ee"></i>
+    <span>Staff Attendance Today</span>
+    <h2 id="staffAttendanceRate">0%</h2>
+    </div>
+
+    <div class="stat-card" style="border-left: 5px solid #f59e0b;">
+    <i class="fas fa-database" style="color: #f59e0b"></i>
+    <span>Incomplete Profiles</span>
+    <h2 id="dataHealthCount">0</h2>
+    </div>
+  </div>
+      <div class="bottom-grid" style="margin-top: 20px;">
+    <div class="card" style="text-align: center;">
+        <h3 style="font-size: 16px; margin-bottom: 15px;"><i class="fas fa-chart-pie"></i> Staff Composition</h3>
+        <div style="height: 250px; position: relative;">
+            <canvas id="staffDonutChart"></canvas>
         </div>
+    </div>
+
+    <div class="card" style="text-align: center;">
+        <h3 style="font-size: 16px; margin-bottom: 15px;"><i class="fas fa-chart-bar"></i> Attendance (Last 7 Days)</h3>
+        <div style="height: 250px; position: relative;">
+            <canvas id="attendanceBarChart"></canvas>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<div class="card notes-area">
+    <h3><i class="fas fa-bullhorn"></i> Circular Notes</h3>
+    
+    <textarea id="adminNote" placeholder="Write your message here (e.g. Tomorrow is Holiday)..." 
+        style="width:100%; height:80px; padding:10px; border-radius:10px; border:1px solid #ddd; font-family: inherit; resize: none;"></textarea>
+    
+    <div style="margin: 12px 0; display: flex; flex-wrap: wrap; gap: 10px; font-size: 13px; font-weight: 600; color: #444;">
+        <label style="cursor: pointer; background: #f1f5f9; padding: 5px 10px; border-radius: 6px;">
+            <input type="radio" name="targetUser" value="All" checked> 🌎 All
+        </label>
+        <label style="cursor: pointer; background: #f1f5f9; padding: 5px 10px; border-radius: 6px;">
+            <input type="radio" name="targetUser" value="Teachers" > 👨‍🏫 Teachers
+        </label>
+        <label style="cursor: pointer; background: #f1f5f9; padding: 5px 10px; border-radius: 6px;">
+            <input type="radio" name="targetUser" value="Students"> 👨‍🎓 Students
+        </label>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <label style="font-size: 12px; color: #666; min-width: 70px;">Expire On:</label>
+            <input type="date" id="noticeExpiry" style="flex: 1; padding: 6px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px;">
+        </div>
+        
+        <button onclick="saveNote()" style="background: #4361ee; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fas fa-paper-plane"></i> Send Notice
+        </button>
+    </div>
+</div>
+        </div>
+        
         <div class="card">
           <div
             style="
@@ -373,124 +495,784 @@
           ></div>
         </div>
       </div>
+     <div class="card" style="margin-top: 20px; width: 100%; padding: 0; overflow: hidden; border: 1px solid #ff4d4d;">
+    <div onclick="toggleDues()" style="background: #fff5f5; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="color: #d63031; margin: 0; font-size: 16px;">
+            <i class="fas fa-exclamation-triangle"></i> High Dues Alert 
+            <span id="duesCountBadge" style="background: #d63031; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px; margin-left: 10px;">0</span>
+        </h3>
+        <i id="dropdownIcon" class="fas fa-chevron-down" style="color: #d63031; transition: 0.3s;"></i>
+    </div>
+
+    <div id="duesDropdown" style="display: none; max-height: 400px; overflow-y: auto; background: white; padding: 15px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid #eee; color: #666;">
+                    <th style="padding: 10px;">mID</th>
+                    <th style="padding: 10px;">Student Name</th>
+                    <th style="padding: 10px;">Class</th>
+                    <th style="padding: 10px;">Pending Amount</th>
+                </tr>
+            </thead>
+            <tbody id="criticalFeeBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+<div class="card" style="margin-top: 20px; border-top: 4px solid var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+        <h3 style="font-size: 16px; color: #333;">
+            <i class="fas fa-calendar-minus" style="color: var(--primary); margin-right: 8px;"></i> 
+            Staff Leave Requests 
+            <span id="leaveBadge" style="background: var(--danger); color: white; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 5px; display: none;">0</span>
+        </h3>
+        <button onclick="updateLeaveRequests()" style="background: none; border: none; color: var(--primary); cursor: pointer; font-size: 13px;">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+    </div>
+
+    <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table style="width: 100%; min-width: 600px; border-collapse: collapse; font-size: 13px;">
+            <thead>
+                <tr style="text-align: left; background: #f8f9fd; color: #666;">
+                    <th style="padding: 12px; border-bottom: 2px solid #eee;">Teacher Details</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #eee;">Leave Type & Dates</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #eee;">Reason</th>
+                    <th style="padding: 12px; border-bottom: 2px solid #eee; text-align: center;">Action</th>
+                </tr>
+            </thead>
+            <tbody id="leaveRequestsBody">
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #aaa;">
+                        <i class="fas fa-spinner fa-spin"></i> Loading requests...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
     </main>
-   <script>
-    // Sabse pehle functions ko page load par call karein
-    window.onload = function () {
-            loadDashboardData();
-            renderTasks();
-        };
+    <script>
+ // ======================================================
+// 🚀 THE COMPLETE CONSOLIDATED DASHBOARD MASTER SCRIPT 
+// ======================================================
 
-        function logoutAdmin() {
-            localStorage.removeItem("adminActive");
-            window.location.href = "admin-login.html";
-        }
-    function loadDashboardData() {
-        // 1. Staff & Student Counting
-        const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
-        const students = JSON.parse(localStorage.getItem("schoolStudents")) || [];
-        document.getElementById("staffCount").innerText = staff.length;
-        document.getElementById("studentCount").innerText = students.length;
+function generateAIInsights() {
+    const students = JSON.parse(localStorage.getItem("schoolStudents")) || [];
+    const aiText = document.getElementById("aiStatusText");
 
-        // 2. Salary Calculation
-        const payroll = JSON.parse(localStorage.getItem("payroll_january_2026")) || [];
-        let paidAmount = payroll.filter(p => p.status === "PAID").reduce((sum, p) => sum + p.netPayable, 0);
-        let pendingAmount = payroll.filter(p => p.status === "PENDING").reduce((sum, p) => sum + p.netPayable, 0);
-
-        document.getElementById("totalSalary").innerText = "₹" + paidAmount.toLocaleString();
-        document.getElementById("totalDues").innerText = "₹" + pendingAmount.toLocaleString();
-
-        // 3. Sync Notice Box
-        const savedNotice = localStorage.getItem("adminNotice") || "";
-        const noteBox = document.getElementById("adminNote");
-        if(noteBox) noteBox.value = savedNotice;
-    }
-
-   // --- Notice Sending Logic ---
-function saveNote() {
-    const noteBox = document.getElementById("adminNote");
-    
-    // Agar box nahi mila toh code yahan rukk jaye
-    if(!noteBox) return;
-
-    const note = noteBox.value;
-
-    // Khali message check karein
-    if (note.trim() === "") {
-        alert("Kripya notice likhein!");
+    if (!aiText) return;
+    if (students.length === 0) {
+        aiText.innerHTML = "❌ <strong>Database Empty:</strong> No student records found.";
         return;
     }
 
-    // 1. Data Save karein (Student Portal ke liye)
-    localStorage.setItem("adminNotice", note);
-    
-    // 2. Time Save karein (Bade hi professional tarike se)
-    const timeString = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-    localStorage.setItem("adminNoticeTime", timeString);
+    let totalExpected = 0;
+    let totalCollected = 0;
+    let incompleteCount = 0;
+    let highDefaulters = [];
 
-    // 3. Admin ko confirm karein
-    alert("📢 Circular updated for all users!");
+    students.forEach(s => {
+        const t = Number(s.totalFees) || 0;
+        const p = Number(s.paidAmount) || 0;
+        const due = t - p;
+        
+        totalExpected += t;
+        totalCollected += p;
 
-    // 4. SABSE JARURI: Box ko khali kar dein
-    noteBox.value = ""; 
+        if (due > 5000) highDefaulters.push(s);
+        if (!s.class || !s.mId || !s.name) incompleteCount++;
+    });
+
+    const ratio = totalExpected > 0 ? ((totalCollected / totalExpected) * 100).toFixed(1) : 0;
+    let message = "";
+    let actionBtn = "";
+
+    // --- AI RECOGNITION LOGIC ---
+    if (highDefaulters.length > 0 && ratio < 60) {
+        message = `🚨 <strong>Finance Alert:</strong> ${highDefaulters.length} students have critical dues (>₹5000).`;
+        
+        // WhatsApp link for the first high defaulter as a quick action
+        const firstS = highDefaulters[0];
+        const waMsg = `Hello, this is a reminder regarding the pending fees for ${firstS.name}. Amount due: ₹${firstS.totalFees - firstS.paidAmount}. Please clear it soon.`;
+        
+        actionBtn = `
+            <div style="display:flex; gap:8px;">
+                <button onclick="toggleDues()" style="background:#4361ee; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px;">View All</button>
+                <a href="https://wa.me/${firstS.phone || ''}?text=${encodeURIComponent(waMsg)}" target="_blank" style="background:#25D366; color:white; text-decoration:none; padding:6px 10px; border-radius:6px; font-size:11px; font-weight:600;">
+                    <i class="fab fa-whatsapp"></i> Notify Top
+                </a>
+            </div>`;
+    } 
+    else if (incompleteCount > 0) {
+        message = `📋 <strong>Data Health:</strong> Found ${incompleteCount} incomplete profiles.`;
+        actionBtn = `<button onclick="window.location.href='admin-students.html'" style="background:#f59e0b; color:white; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px;">Fix Now</button>`;
+    }
+    else {
+        message = `✨ <strong>System Health Normal:</strong> Collection ratio is ${ratio}%.`;
+        actionBtn = `<span style="color:green; font-size:12px;">✔ Healthy</span>`;
+    }
+
+    // UI Render
+    aiText.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+            <div style="flex:1; min-width:200px; font-size:13px;">${message}</div>
+            <div>${actionBtn}</div>
+        </div>`;
+
+    // Sync Cards
+    if(document.getElementById('collectionRatio')) {
+        document.getElementById('collectionRatio').innerText = ratio + "%";
+        document.getElementById('collectionProgress').style.width = ratio + "%";
+    }
 }
 
-    // --- Smart To-Do List Logic (Jo gayab tha) ---
-    function addTask() {
-        const task = document.getElementById("todoTask").value;
-        const date = document.getElementById("todoDate").value;
-
-        if (!task || !date) {
-            alert("Task aur Date dono bhariye!");
-            return;
-        }
-
-        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
-        tasks.push({ id: Date.now(), task: task, date: date });
-        localStorage.setItem("adminTasks", JSON.stringify(tasks));
-
-        document.getElementById("todoTask").value = "";
-        renderTasks();
+// IMPORTANT: Add generateAIInsights(); inside your window.onload function!
+// ===== ADMIN SESSION PROTECTION =====
+(function checkAdminAccess() {
+    const session = JSON.parse(localStorage.getItem("adminSession"));
+    
+    if (!session) {
+        window.location.href = "admin-login.html";
+        return;
     }
 
-    function renderTasks() {
-        const list = document.getElementById("todoList");
-        const alertMsg = document.getElementById("alertMsg");
-        if(!list) return;
+    const now = Date.now();
+    if (now - session.loginTime > session.expiresIn) {
+        localStorage.removeItem("adminSession");
+        alert("Session expired. Please login again.");
+        window.location.href = "admin-login.html";
+    }
+})();
 
-        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
-        let html = "";
-        let hasAlert = false;
+window.onload = function () {
+    updateClock();
+    loadDashboardData(); // Numbers & AI Logic
+    renderCharts();      // Donut & Bar Graphs
+    renderTasks();       // To-Do List
+    normalizeStudentsDB(); // Database Sync
+    updateCriticalDues();  // Defaulters List
+    updateLeaveRequests();  // Leave request
+};
 
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
+// 1. LIVE DATE & CLOCK
+function updateClock() {
+    const clockEl = document.getElementById("liveClock");
+    if (!clockEl) return;
+    const now = new Date();
+    clockEl.innerText = now.toLocaleDateString() + " | " + now.toLocaleTimeString();
+}
+setInterval(updateClock, 1000);
 
-        tasks.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach((t) => {
-            const taskDate = new Date(t.date);
-            const isUrgent = taskDate <= tomorrow;
-            if (isUrgent) hasAlert = true;
+// 2. LOGOUT LOGIC
+function logoutAdmin() {
+    if(confirm("Are you sure you want to logout?")) {
+        localStorage.removeItem("adminSession");
+        window.location.href = "admin-login.html";
+    }
+}
 
-            html += `
-                <div class="todo-item ${isUrgent ? 'blink-alert' : ''}" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #eee;">
-                    <div>
-                        <strong>${t.task}</strong> <br>
-                        <small><i class="far fa-calendar-alt"></i> ${t.date}</small>
-                    </div>
-                    <i class="fas fa-trash-alt" style="color: #f72585; cursor: pointer;" onclick="deleteTask(${t.id})"></i>
-                </div>`;
+function loadDashboardData() {
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const students = JSON.parse(localStorage.getItem("schoolStudents")) || [];
+    const feeHistory = JSON.parse(localStorage.getItem("feeHistory")) || [];
+    const expensesDB = JSON.parse(localStorage.getItem("schoolExpenses")) || [];
+    
+    const now = new Date();
+    const currentMonthName = now.toLocaleString('default', { month: 'long' });
+
+    // --- 1. BASIC COUNTERS ---
+    if(document.getElementById("staffCount")) document.getElementById("staffCount").innerText = staff.length;
+    if(document.getElementById("studentCount")) document.getElementById("studentCount").innerText = students.length;
+
+    // --- 2. ATTENDANCE CARD FIX (Adding this missing part) ---
+  
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayKey = `staffAttendance_${year}-${month}-${day}`; 
+    const todayAtt = JSON.parse(localStorage.getItem(todayKey)) || [];
+
+    const presentCount = todayAtt.filter(a => 
+        a.status === "PRESENT" || a.status === "P" || a.status === "LATE" || a.status === "L"
+    ).length;
+
+    const attRate = staff.length > 0 ? Math.round((presentCount / staff.length) * 100) : 0;
+    
+    if(document.getElementById("staffAttendanceRate")) {
+        document.getElementById("staffAttendanceRate").innerText = attRate + "%";
+    }
+
+    // --- 2. MONTHLY FEES (Is Mahine Kitna Paisa Aaya) ---
+    // Pehle ye static calculation tha (Total/12), ab ye asli history se data uthayega
+    const monthlyCollection = feeHistory
+        .filter(h => h.feeMonth === currentMonthName)
+        .reduce((sum, h) => sum + (Number(h.amount) || 0), 0);
+
+    if(document.getElementById("totalFees")) 
+        document.getElementById("totalFees").innerText = "₹" + monthlyCollection.toLocaleString();
+
+    // --- 3. TOTAL DUES (Live Pending Balance) ---
+    let totalDuesAmount = 0;
+    let totalExpected = 0;
+    let totalReceived = 0;
+
+    students.forEach(s => {
+        const annual = Number(s.totalFees) || 0;
+        const paid = Number(s.paidAmount) || 0; // Finance hub isi ko update karta hai
+        totalExpected += annual;
+        totalReceived += paid;
+        totalDuesAmount += (annual - paid);
+    });
+
+    if(document.getElementById("totalDues")) 
+        document.getElementById("totalDues").innerText = "₹" + totalDuesAmount.toLocaleString();
+
+    // --- 4. PAYROLL SYNC (Salary Paid) ---
+    let paidSalary = 0;
+
+Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("payroll_")) {
+        const records = JSON.parse(localStorage.getItem(key)) || [];
+        const monthPaid = records
+            .filter(p => p.status === "PAID")
+            .reduce((sum, p) => sum + (Number(p.net) || 0), 0);
+        paidSalary += monthPaid;
+    }
+});
+    
+    if(document.getElementById("totalSalary")) 
+        document.getElementById("totalSalary").innerText = "₹" + paidSalary.toLocaleString();
+
+    // --- 5. REVENUE, EXPENSES & PROFIT (Finance Hub Sync) ---
+    const totalRevenue = feeHistory.reduce((sum, h) => sum + (Number(h.amount) || 0), 0);
+    const otherExp = expensesDB.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+    const totalExpenses = otherExp + paidSalary;
+    const netProfit = totalRevenue - totalExpenses;
+
+    if(document.getElementById("dashRevenue")) document.getElementById("dashRevenue").innerText = "₹" + totalRevenue.toLocaleString();
+    if(document.getElementById("dashExpenses")) document.getElementById("dashExpenses").innerText = "₹" + totalExpenses.toLocaleString();
+    if(document.getElementById("dashProfit")) document.getElementById("dashProfit").innerText = "₹" + netProfit.toLocaleString();
+
+    // --- 6. ADDITIONAL INSIGHTS ---
+    const ratio = totalExpected > 0 ? Math.round((totalReceived / totalExpected) * 100) : 0;
+    if(document.getElementById("collectionRatio")) document.getElementById("collectionRatio").innerText = ratio + "%";
+
+    const incomplete = students.filter(s => !s.phone || s.phone.length < 10 || !s.fName).length;
+    if(document.getElementById("dataHealthCount")) document.getElementById("dataHealthCount").innerText = incomplete;
+}
+
+// 4. ANALYTICS ENGINE (Forcefully Responsive Fix)
+function renderCharts() {
+    if (!window.Chart) return;
+
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const teaching = staff.filter(s => s.category === 'Teaching').length || 0;
+    const nonTeaching = staff.filter(s => s.category === 'Non-Teaching').length || 0;
+    const adminStaff = staff.filter(s => s.category === 'Admin').length || 0;
+
+    // Donut Chart
+    const ctxStaff = document.getElementById('staffDonutChart');
+    if(ctxStaff) {
+        new Chart(ctxStaff, {
+            type: 'doughnut',
+            data: {
+                labels: ['Teaching', 'Non-Teaching', 'Admin'],
+                datasets: [{
+                    data: [teaching, nonTeaching, adminStaff],
+                    backgroundColor: ['#4361ee', '#10b981', '#f59e0b'],
+                    borderWidth: 0
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, // Mobile responsiveness fix
+                plugins: { legend: { position: 'bottom' } } 
+            }
+        });
+    }
+
+    // Attendance Bar Chart (REAL DATA)
+const ctxBar = document.getElementById('attendanceBarChart');
+if(ctxBar) {
+
+    const staff = JSON.parse(localStorage.getItem("schoolStaff")) || [];
+    const totalStaff = staff.length || 1;
+
+    const last7Days = [];
+    const attData = [];
+
+    for(let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+
+        const dateStr = d.toISOString().split('T')[0];
+        const dayLabel = d.toLocaleDateString('en-US', { weekday: 'short' });
+
+        const dayAtt = JSON.parse(localStorage.getItem("staffAttendance_" + dateStr)) || [];
+        const presentCount = dayAtt.filter(a => a.status === "PRESENT" || a.status === "P" || a.status === "LATE" || a.status === "L").length;
+
+        const percent = Math.round((presentCount / totalStaff) * 100);
+
+        last7Days.push(dayLabel);
+        attData.push(percent);
+    }
+
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: last7Days,
+            datasets: [{
+                label: 'Attendance %',
+                data: attData,
+                backgroundColor: '#4cc9f0',
+                borderRadius: 5
+            }]
+        },
+        options: { 
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { 
+                y: { 
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: { callback: value => value + "%" }
+                }
+            }
+        }
+    });
+}
+}
+
+// 5. CRITICAL DUES DROPDOWN & FILTER
+function toggleDues() {
+    const content = document.getElementById("duesDropdown");
+    const icon = document.getElementById("dropdownIcon");
+    
+    if (!content) {
+        // Agar dropdown nahi mil raha, toh seedha table section par scroll karein
+        const section = document.querySelector('.critical-dues-section');
+        if(section) section.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    const isHidden = content.style.display === "none" || content.style.display === "";
+    content.style.display = isHidden ? "block" : "none";
+    
+    if(icon) icon.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+    
+    // Scroll to the dues table so the user sees it immediately
+    if(isHidden) content.scrollIntoView({ behavior: 'smooth' });
+}function toggleDues() {
+    const content = document.getElementById("duesDropdown");
+    const icon = document.getElementById("dropdownIcon");
+    
+    if (!content) {
+        // Agar dropdown nahi mil raha, toh seedha table section par scroll karein
+        const section = document.querySelector('.critical-dues-section');
+        if(section) section.scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    const isHidden = content.style.display === "none" || content.style.display === "";
+    content.style.display = isHidden ? "block" : "none";
+    
+    if(icon) icon.style.transform = isHidden ? "rotate(180deg)" : "rotate(0deg)";
+    
+    // Scroll to the dues table so the user sees it immediately
+    if(isHidden) content.scrollIntoView({ behavior: 'smooth' });
+}
+
+function updateCriticalDues() {
+    const students = JSON.parse(localStorage.getItem("schoolStudents")) || [];
+    const tbody = document.getElementById("criticalFeeBody");
+    const badge = document.getElementById("duesCountBadge");
+    if (!tbody) return;
+
+    // Filter students with dues > 5000
+    const defaulters = students.filter(s => (parseFloat(s.totalFees) || 0) - (parseFloat(s.paidAmount) || 0) > 5000);
+    
+    if(badge) badge.innerText = defaulters.length;
+
+    tbody.innerHTML = defaulters.length === 0 
+        ? "<tr><td colspan='5' style='text-align:center; padding:20px; color:#aaa;'>Sab kuch clear hai! ✅</td></tr>"
+        : defaulters.map(s => {
+            const dueAmount = (parseFloat(s.totalFees) || 0) - (parseFloat(s.paidAmount) || 0);
+            
+            // Fix: Check both mId and mID for compatibility
+            const studentID = s.mId || s.mID || s.roll || "N/A";
+            const studentName = s.name || (s.fName ? s.fName + " " + s.lName : "Unknown");
+            const phoneNum = s.phone || "";
+
+            return `
+            <tr style="border-bottom: 1px solid #f1f1f1;">
+                <td style="padding: 12px; font-weight: 600; color: #4361ee;">${studentID}</td>
+                <td style="padding: 12px;">${studentName}</td>
+                <td style="padding: 12px;">${s.class || '-'}-${s.section || '-'}</td>
+                <td style="padding: 12px; color: #d63031; font-weight: bold;">₹${dueAmount.toLocaleString()}</td>
+                <td style="padding: 12px; text-align:center;">
+                    <a href="https://wa.me/${phoneNum}?text=Reminder: Fee balance of ₹${dueAmount} is pending for ${studentName}." 
+                       target="_blank" 
+                       style="color:#25D366; font-size: 18px; text-decoration:none;">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </td>
+            </tr>`;
+        }).join('');
+}
+// 6. MASTER SYNC & NORMALIZATION
+function normalizeStudentsDB() {
+    let schoolStudents = JSON.parse(localStorage.getItem("schoolStudents")) || [];
+    if (!localStorage.getItem("students") || JSON.parse(localStorage.getItem("students")).length === 0) {
+        localStorage.setItem("students", JSON.stringify(schoolStudents));
+    }
+}
+
+// 7. SMART TO-DO & NOTICE
+function addTask() {
+    const taskInput = document.getElementById("todoTask");
+    const dateInput = document.getElementById("todoDate");
+    if (!taskInput || !taskInput.value || !dateInput.value) return alert("Task Details bhariye!");
+    
+    let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+    tasks.push({ id: Date.now(), task: taskInput.value, date: dateInput.value });
+    localStorage.setItem("adminTasks", JSON.stringify(tasks));
+    taskInput.value = "";
+    renderTasks();
+}
+
+function renderTasks() {
+    const list = document.getElementById("todoList");
+    if(!list) return;
+    let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+    list.innerHTML = tasks.length ? tasks.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(t => `
+        <div class="todo-item" style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+            <div><strong>${t.task}</strong><br><small><i class="far fa-calendar-alt"></i> ${t.date}</small></div>
+            <i class="fas fa-trash-alt" style="color:#f72585; cursor:pointer;" onclick="deleteTask(${t.id})"></i>
+        </div>`).join('') : "<p style='text-align:center; padding:10px;'>No pending tasks.</p>";
+}
+
+function deleteTask(id) {
+    let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
+    localStorage.setItem("adminTasks", JSON.stringify(tasks.filter(t => t.id !== id)));
+    renderTasks();
+}
+
+function saveNote() {
+    const noteText = document.getElementById("adminNote").value;
+    const expiryDate = document.getElementById("noticeExpiry").value;
+    
+    // Check karein ki kounsa Radio Button select hai
+    const targetEl = document.querySelector('input[name="targetUser"]:checked');
+    const target = targetEl ? targetEl.value : "All"; 
+    
+    if (!noteText.trim()) return alert("Please enter message!");
+
+    // Teacher dashboard isi key ko read karta hai
+    let notices = JSON.parse(localStorage.getItem("school_admin_broadcasts")) || [];
+
+    const newNotice = {
+        id: Date.now(),
+        text: noteText,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        expiry: expiryDate,
+        targetGroup: target, // 'All', 'Teachers', ya 'Students'
+        sender: "Super Admin"
+    };
+
+    notices.push(newNotice);
+    localStorage.setItem("school_admin_broadcasts", JSON.stringify(notices));
+    
+    // Backup ke liye purani key (Single Notice) bhi update kar dete hain
+    localStorage.setItem("adminNotice", JSON.stringify(newNotice));
+
+    alert(`📢 Notice sent to ${target}!`);
+    
+    // Inputs clear karein
+    document.getElementById("adminNote").value = "";
+    document.getElementById("noticeExpiry").value = "";
+}
+// 1. Leave Requests ko fetch aur display karne ka function
+function updateLeaveRequests() {
+    const leaveBody = document.getElementById("leaveRequestsBody");
+    const badge = document.getElementById("leaveBadge");
+    if (!leaveBody) return;
+
+    // Teacher dashboard se 'staffLeaves' data nikalna
+    let allLeaves = JSON.parse(localStorage.getItem("staffLeaves")) || [];
+    
+    // Sirf wahi leaves jo abhi 'PENDING' hain
+    let pendingLeaves = allLeaves.filter(l => l.status === "PENDING" || l.status === "Pending");
+
+    // Badge update (Notification count)
+    if (pendingLeaves.length > 0) {
+        badge.innerText = pendingLeaves.length;
+        badge.style.display = "inline-block";
+    } else {
+        badge.style.display = "none";
+    }
+
+    // Agar koi leave nahi hai
+    if (pendingLeaves.length === 0) {
+        leaveBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:20px; color:#aaa;">No pending staff leave requests. ✅</td></tr>`;
+        return;
+    }
+
+    // Table mein data bharna
+    leaveBody.innerHTML = pendingLeaves.map((leave) => `
+        <tr style="border-bottom: 1px solid #f1f1f1;">
+            <td style="padding: 12px;">
+                <div style="font-weight: 600; color: var(--primary);">${leave.name}</div>
+                <div style="font-size: 11px; color: #777;">ID: ${leave.empId}</div>
+            </td>
+            <td style="padding: 12px;">
+                <span style="background: #eef2ff; color: #4361ee; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${leave.type}</span>
+                <div style="margin-top: 5px; font-size: 11px; color: #444;">
+                    <i class="far fa-calendar-alt"></i> ${leave.from} <i class="fas fa-arrow-right" style="font-size: 8px;"></i> ${leave.to}
+                </div>
+            </td>
+            <td style="padding: 12px; max-width: 200px; color: #555; font-style: italic;">
+                "${leave.reason}"
+            </td>
+            <td style="padding: 12px; text-align: center;">
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                    <button onclick="respondLeave('${leave.id}', 'APPROVED')" style="background:#10b981; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:600; font-size:11px;">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button onclick="respondLeave('${leave.id}', 'REJECTED')" style="background:#f72585; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:600; font-size:11px;">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 2. Approve/Reject button ka action function
+function respondLeave(leaveId, newStatus) {
+    let allLeaves = JSON.parse(localStorage.getItem("staffLeaves")) || [];
+    
+    // Status update karna (ID match karke)
+    allLeaves = allLeaves.map(leave => {
+        if (String(leave.id) === String(leaveId)) {
+            return { ...leave, status: newStatus };
+        }
+        return leave;
+    });
+
+    localStorage.setItem("staffLeaves", JSON.stringify(allLeaves));
+    
+    // Alert message
+    const alertColor = newStatus === 'APPROVED' ? 'green' : 'red';
+    alert(`Staff Leave ${newStatus}!`);
+    
+    // UI Refresh karein
+    updateLeaveRequests();
+}
+
+// 3. Page load hote hi function run karein
+
+const existingOnload = window.onload;
+window.onload = function() {
+    if (existingOnload) existingOnload();
+    updateLeaveRequests(); 
+};
+
+function syncFinanceData() {
+    // 1. Fee Data Fetching
+    const feeHistory = JSON.parse(localStorage.getItem("feeHistory")) || [];
+    const totalRevenue = feeHistory.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+
+    // 2. Expense Data Fetching
+    const expenses = JSON.parse(localStorage.getItem("schoolExpenses")) || [];
+    const otherExp = expenses.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+
+    // 3. Staff Salary Data (Sirf 'PAID' status waale)
+    const now = new Date();
+    const payrollKey = `payroll_${now.getFullYear()}_${String(now.getMonth() + 1).padStart(2, "0")}`;
+    const payrollRecords = JSON.parse(localStorage.getItem(payrollKey)) || [];
+    const staffExp = payrollRecords
+        .filter(p => p.status === "PAID")
+        .reduce((sum, p) => sum + (Number(p.net) || 0), 0);
+
+    // 4. Calculations
+    const totalExpenses = otherExp + staffExp;
+    const netProfit = totalRevenue - totalExpenses;
+
+    // 5. Update UI
+    document.getElementById("dashRevenue").innerText = "₹ " + totalRevenue.toLocaleString();
+    document.getElementById("dashExpenses").innerText = "₹ " + totalExpenses.toLocaleString();
+    document.getElementById("dashProfit").innerText = "₹ " + netProfit.toLocaleString();
+}
+
+// Page load hone par sync karein
+window.addEventListener("load", function() {
+
+    // 🔐 Session Validation First
+    const session = JSON.parse(localStorage.getItem("adminSession"));
+    if (!session) {
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    const now = Date.now();
+    if (now - session.loginTime > session.expiresIn) {
+        localStorage.removeItem("adminSession");
+        window.location.href = "admin-login.html";
+        return;
+    }
+
+    // ✅ Only if valid
+    generateAIInsights(); 
+
+    updateClock();
+    loadDashboardData();
+    renderCharts();
+    renderTasks();
+    normalizeStudentsDB();
+    updateCriticalDues();
+    updateLeaveRequests();
+    syncFinanceData();
+
+});
+/* =========================================
+   ADMIN DASHBOARD AUTO SYNC ENGINE
+   (No Function Modified)
+========================================= */
+
+// Auto refresh when page loads
+document.addEventListener("DOMContentLoaded", function () {
+    loadDashboardData();
+});
+
+// Auto refresh when localStorage changes (Multi Tab Sync)
+window.addEventListener("storage", function () {
+    loadDashboardData();
+});
+
+// Auto refresh every 5 seconds (Real-time feel)
+setInterval(function () {
+    loadDashboardData();
+}, 5000);
+
+
+/* =========================================
+   SAFE STORAGE WRAPPER (Data Protection)
+========================================= */
+
+function safeJSONParse(key) {
+    try {
+        return JSON.parse(localStorage.getItem(key)) || [];
+    } catch (e) {
+        console.warn("Storage Error on key:", key);
+        return [];
+    }
+}
+
+
+/* =========================================
+   FORCE DATA CONSISTENCY CHECK
+========================================= */
+
+function verifyFinanceIntegrity() {
+
+    const students = safeJSONParse("schoolStudents");
+    const feeHistory = safeJSONParse("feeHistory");
+
+    let recalculatedPaid = {};
+
+    // Recalculate paid from feeHistory
+    feeHistory.forEach(entry => {
+        if (!recalculatedPaid[entry.studentId]) {
+            recalculatedPaid[entry.studentId] = 0;
+        }
+        recalculatedPaid[entry.studentId] += Number(entry.amount) || 0;
+    });
+
+    // Sync paidAmount back to students (WITHOUT changing your dashboard logic)
+    let updated = false;
+
+    students.forEach(student => {
+        const actualPaid = recalculatedPaid[student.id] || 0;
+        if (Number(student.paidAmount) !== actualPaid) {
+            student.paidAmount = actualPaid;
+            updated = true;
+        }
+    });
+
+    if (updated) {
+        localStorage.setItem("schoolStudents", JSON.stringify(students));
+    }
+}
+
+
+/* =========================================
+   AUTO VERIFY BEFORE DASHBOARD LOAD
+========================================= */
+
+(function autoVerify() {
+    verifyFinanceIntegrity();
+    loadDashboardData();
+})();
+// ===============================
+// REVENUE TOGGLE CONTROLLER
+// ===============================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("toggleAnnual");
+    const revenueEl = document.getElementById("dashRevenue");
+
+    if (!toggle || !revenueEl) return;
+
+    // Initial load (Monthly default)
+    updateRevenue(false);
+
+    // Toggle change event
+    toggle.addEventListener("change", function () {
+        updateRevenue(this.checked);
+    });
+
+    function updateRevenue(isAnnual) {
+        const feesData = JSON.parse(localStorage.getItem("schoolFees")) || [];
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        let totalRevenue = 0;
+
+        feesData.forEach(fee => {
+            const feeDate = new Date(fee.date || fee.paymentDate);
+            if (isNaN(feeDate)) return;
+
+            const feeMonth = feeDate.getMonth();
+            const feeYear = feeDate.getFullYear();
+
+            const amount =
+                Number(fee.tuitionFee || 0) +
+                Number(fee.transportFee || 0) +
+                Number(fee.hostelFee || 0) +
+                Number(fee.lateFee || 0) +
+                Number(fee.otherFee || 0);
+
+            if (isAnnual) {
+                if (feeYear === currentYear) {
+                    totalRevenue += amount;
+                }
+            } else {
+                if (feeYear === currentYear && feeMonth === currentMonth) {
+                    totalRevenue += amount;
+                }
+            }
         });
 
-        list.innerHTML = html || "<p style='color: #999; text-align: center;'>No tasks.</p>";
-        if(alertMsg) alertMsg.innerText = hasAlert ? "⚠️ URGENT!" : "";
+        revenueEl.innerText = "₹ " + totalRevenue.toLocaleString("en-IN");
     }
 
-    function deleteTask(id) {
-        let tasks = JSON.parse(localStorage.getItem("adminTasks")) || [];
-        tasks = tasks.filter((t) => t.id !== id);
-        localStorage.setItem("adminTasks", JSON.stringify(tasks));
-        renderTasks();
-    }
+});
+
 </script>
   </body>
 </html>
-
